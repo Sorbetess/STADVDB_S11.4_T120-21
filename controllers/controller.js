@@ -1,4 +1,26 @@
+const Pool = require('pg').Pool;
+
+const pool = new Pool({
+  user: '',
+  host: 'localhost',
+  database: 'movies',
+  password: '',
+  port: 5432
+});
+
 const controller = {
+  /** Sample query */
+  getMovies: function (req, res) {
+    pool.query(
+      'SELECT * FROM movies ORDER BY popularity DESC LIMIT 10',
+      (error, results) => {
+        if (error) throw error;
+
+        res.status(200).json(results.rows);
+      }
+    );
+  },
+
   getFavicon: function (req, res) {
     console.log('@ controller, getFavicon');
 
