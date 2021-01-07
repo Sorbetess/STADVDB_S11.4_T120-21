@@ -14,12 +14,13 @@ app.engine(
     extname: 'hbs',
     defaultView: 'main',
     layoutsDir: path.join(__dirname, '/views/layouts'),
-    partialsDir: path.join(__dirname, 'views/partials')
+    partialsDir: path.join(__dirname, 'views/partials'),
+    stylesDir: path.join(__dirname, 'public/css')
   })
 );
 
 app.set('view engine', 'hbs');
-
+app.use(express.static('public'));
 app.use('/', indexRouter);
 
 const PORT = process.env.PORT || 5000;

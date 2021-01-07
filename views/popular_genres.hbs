@@ -1,27 +1,27 @@
 <div class="container">
-  <h1>{{ title }}</h1>
+  <h2>{{ title }}</h2>
   <br>
-  
-  <div id = "form">
 
-    <form name = "genre" id = "genre" method = "post">
-      
-      <label for = "genre">Genre:</label>
+  <div id="form">
 
-      <select id = "genre" name = "genre">
+    <form name="genre" id="genre" method="post">
 
-        <option value = {{genre}}>temp genre</option>
-        <option value = {{genre}}>temp genre</option>
-        <option value = {{genre}}>temp genre</option>
-        
+      <label for="genre">Genre:</label>
+
+      <select id="genre" name="genre">
+
+        <option value={{genre}}>temp genre</option>
+        <option value={{genre}}>temp genre</option>
+        <option value={{genre}}>temp genre</option>
+
         <!-- loop yung para sa option?? -->
         {{#each genres}}
-          <option value = {{genre}}>{{genre}}</option>
+        <option value={{genre}}>{{genre}}</option>
         {{/each}}
 
       </select>
 
-      <button onclick = "submit()">Search</button>
+      <button onclick="submit()">Search</button>
 
     </form>
 
