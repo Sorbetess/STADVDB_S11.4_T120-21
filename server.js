@@ -6,7 +6,7 @@ const handlebars = require('handlebars');
 const app = express();
 const port = 3000;
 
-const indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index.js');
 
 app.engine(
   'hbs',
