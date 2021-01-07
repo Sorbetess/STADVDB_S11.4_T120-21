@@ -2,7 +2,7 @@ const router = require('express').Router();
 const controller = require('../controllers/controller.js');
 const bodyparser = require('body-parser');
 
-router.use(bodyparser.urlencoded({extended: false}));
+router.use(bodyparser.urlencoded({ extended: false }));
 
 router.get('/', (req, res) => {
   controller.getHome(req, res);

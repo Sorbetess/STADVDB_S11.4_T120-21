@@ -11,14 +11,21 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="js/script.js"></script>
   <title>Skyflix</title>
 </head>
 
 <body>
-  {{> nav}}
-  <div class="container mt-5 mb-5">
-    {{{ body }}}
+  <div class="container">
+    <div class="row">
+      <div class="col-4">
+        {{> nav}}
+      </div>
+      <div class="col-8">
+        {{{ body }}}
+      </div>
+    </div>
   </div>
 </body>
 
