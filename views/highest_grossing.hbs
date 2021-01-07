@@ -15,7 +15,9 @@
         <option value = {{year}}>temp year</option>
         
         <!-- loop yung para sa option?? -->
-        <option value = {{year}}>{{year}}</option>
+        {{#each release_year}}
+          <option value = {{year}}>{{year}}</option>
+        {{/each}}
 
       </select>
 

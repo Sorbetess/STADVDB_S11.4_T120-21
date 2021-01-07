@@ -15,7 +15,9 @@
         <option value = {{genre}}>temp genre</option>
         
         <!-- loop yung para sa option?? -->
-        <option value = {{genre}}>{{genre}}</option>
+        {{#each genres}}
+          <option value = {{genre}}>{{genre}}</option>
+        {{/each}}
 
       </select>
 
