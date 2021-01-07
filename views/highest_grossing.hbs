@@ -2,5 +2,27 @@
   <h1>{{ title }}</h1>
   <br>
   
-  </p>
+  <div id = "form">
+
+    <form name = "year" id = "year" method = "post">
+      
+      <label for = "year">Year:</label>
+
+      <select id = "year" name = "year">
+
+        <option value = {{year}}>temp year</option>
+        <option value = {{year}}>temp year</option>
+        <option value = {{year}}>temp year</option>
+        
+        <!-- loop yung para sa option?? -->
+        <option value = {{year}}>{{year}}</option>
+
+      </select>
+
+      <button onclick = "submit()">Search</button>
+
+    </form>
+
+  </div>
+
 </div>

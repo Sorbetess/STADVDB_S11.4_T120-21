@@ -2,5 +2,17 @@
   <h1>{{ title }}</h1>
   <br>
   
-  </p>
+  <div id = "form">
+
+    <form name = "movie_collection" id = "movie_collection" method = "post">
+      
+      <label for = "collection">Movie Collection:</label>
+      <input type = "text" id = "collection" name = "collection" onkeydown = "pressedEnter(event)">
+    
+      <button onclick = "submit()">Search</button>
+
+    </form>
+
+  </div>
+
 </div>
