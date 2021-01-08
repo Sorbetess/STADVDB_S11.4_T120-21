@@ -1,33 +1,88 @@
 const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  user: 'postgres',
+  user: '',
   host: 'localhost',
-  database: 'Movies',
-  password: 'password',
+  database: 'movies',
+  password: '',
   port: 5432
 });
 
-const queryController = {
-  postHighestGrossing: function (req, res) {
-    var year = req.body.year;
-    var offset = 0;
-    if (req.query.page) offset = (req.body.page - 1) * 50;
+const queryController = {z
+    postHighestGrossing: function (req, res) {
+      var year = req.body.year;
+      var currentPage = req.body.page;
+      var offset = (currentPage - 1) * 50;
 
-    var query =
-      'SELECT Title, Release_Date, Revenue - Budget AS Net_Income FROM Movies WHERE EXTRACT(year FROM Release_Date) = ' +
-      year +
-      ' ORDER BY Revenue - Budget DESC LIMIT 50 OFFSET ' +
-      offset;
+      console.log(year + " " + currentPage + " " + offset + " ");
+      var query =
+      "SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count FROM Movies WHERE EXTRACT(year FROM Release_Date) = " + year + " ORDER BY Revenue - Budget DESC LIMIT 50 OFFSET " + offset;
 
-    pool.query(query, (error, results) => {
-      if (error) throw error;
+      pool.query(
+        query,
+        (error, results) => {
+          if (error) throw error;
+  
+          console.log(results.rows);
 
-      console.log(results.rows);
+          var lastPage = results.rows[0].full_count/50;
+          var booleanPreviousPage = true;
+          var booleanNextPage = true;
 
-      res.render('display_highest_grossing', {
-        title: 'Top 10 Highest Grossing Movies in ' + year,
-        movies: results.rows
+          if(currentPage <= 1)
+          {
+            booleanPreviousPage = false
+          }
+          
+          if(results.rows[0].full_count <= 50 || currentPage >= lastPage)
+            booleanNextPage = false;
+
+          res.render('display_highest_grossing', {
+            title: "Top 10 Highest Grossing Movies in " + year,
+            movies: results.rows,
+            year: year,
+            previousPage: (currentPage - 1),
+            nextPage: parseInt(currentPage) + 1,
+            booleanPreviousPage: booleanPreviousPage,
+            booleanNextPage: booleanNextPage
+          });
+        }
+      ); 
+    },
+  
+    postMovieInfo: function (req, res) {
+      res.render('movie_info', {
+        title: 'Movie Info',
+      });
+    },
+  
+    /** 2 TABLE QUERIES */
+  
+    postCollectionEarnings: function (req, res) {
+      var collection = req.query.collection;
+      var offset = 0;
+      if(req.query.page)
+        offset = (req.query.page - 1) * 10;
+      var query = "SELECT c.Name, SUM(m.Revenue) FROM Collections c, Movies m WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') AND c.id = m.Belongs_To_Collection GROUP BY c.id, c.Name ORDER BY c.Name ASC LIMIT 10 OFFSET " + offset;
+      
+      pool.query(
+        query,
+        (error, results) => {
+          if (error) throw error;
+  
+          console.log(results.rows);
+  
+          res.render('display_collection_earnings', {
+            title: "Total Movie Collection Earnings of \"" + collection + "\"",
+            collections: results.rows
+          });
+        }
+      );
+    },
+    
+    postHighestRated: function (req, res) {
+      res.render('highest_rated', {
+        title: 'Highest Rated Movies by Year'
       });
     });
   },
