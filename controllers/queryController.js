@@ -1,10 +1,10 @@
 const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  user: 'postgres',
+  user: '',
   host: 'localhost',
   database: 'movies',
-  password: 'p@ssword',
+  password: '',
   port: 5432
 });
 
@@ -12,23 +12,40 @@ const queryController = {
   
     postHighestGrossing: function (req, res) {
       var year = req.body.year;
-      var offset = 0;
-      if(req.query.page)
-        offset = (req.body.page - 1) * 50;
-  
+      var currentPage = req.body.page;
+      var offset = (currentPage - 1) * 50;
+
+      console.log(year + " " + currentPage + " " + offset + " ");
       var query =
-      "SELECT Title, Release_Date, Revenue - Budget AS Net_Income FROM Movies WHERE EXTRACT(year FROM Release_Date) = " + year + " ORDER BY Revenue - Budget DESC LIMIT 50 OFFSET " + offset;
-  
+      "SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count FROM Movies WHERE EXTRACT(year FROM Release_Date) = " + year + " ORDER BY Revenue - Budget DESC LIMIT 50 OFFSET " + offset;
+
       pool.query(
         query,
         (error, results) => {
           if (error) throw error;
   
           console.log(results.rows);
-  
+
+          var lastPage = results.rows[0].full_count/50;
+          var booleanPreviousPage = true;
+          var booleanNextPage = true;
+
+          if(currentPage <= 1)
+          {
+            booleanPreviousPage = false
+          }
+          
+          if(results.rows[0].full_count <= 50 || currentPage >= lastPage)
+            booleanNextPage = false;
+
           res.render('display_highest_grossing', {
             title: "Top 10 Highest Grossing Movies in " + year,
-            movies: results.rows
+            movies: results.rows,
+            year: year,
+            previousPage: (currentPage - 1),
+            nextPage: parseInt(currentPage) + 1,
+            booleanPreviousPage: booleanPreviousPage,
+            booleanNextPage: booleanNextPage
           });
         }
       ); 
@@ -36,7 +53,7 @@ const queryController = {
   
     postMovieInfo: function (req, res) {
       res.render('movie_info', {
-        title: 'Movie Info'
+        title: 'Movie Info',
       });
     },
   
