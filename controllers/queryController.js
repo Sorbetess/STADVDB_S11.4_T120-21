@@ -15,7 +15,7 @@ const queryController = {
     if (req.query.page) offset = (req.body.page - 1) * 50;
 
     var query =
-      'SELECT Title, Release_Date, Revenue - Budget AS Net_Income FROM Movies WHERE EXTRACT(year FROM Release_Date) = ' +
+      'SELECT Title, Release_Date, cast(Revenue - Budget AS money) AS Net_Income FROM Movies WHERE EXTRACT(year FROM Release_Date) = ' +
       year +
       ' ORDER BY Revenue - Budget DESC LIMIT 50 OFFSET ' +
       offset;

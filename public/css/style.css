@@ -58,8 +58,7 @@ input {
 }
 
 nav {
-  box-shadow: 0px 1px 5px grey;
-  font-size: small;
+  position: fixed;
 }
 
 .icon {
@@ -78,4 +77,13 @@ nav {
 .center {
   text-align: center;
   vertical-align: middle;
+}
+
+h1 a {
+  color: #333;
+}
+
+a:hover {
+  background-color: none;
+  text-decoration: none;
 }
