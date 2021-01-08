@@ -22,9 +22,12 @@ const controller = {
     });
   },
 
+  /** 1 TABLE QUERIES */
+
   getHighestGrossing: function (req, res) {
+    var year = req.query.year;
     var query =
-    "SELECT Title, Release_Date, Revenue - Budget AS Net_Income FROM Movies WHERE EXTRACT(year FROM Release_Date) = " + req.query.year + " ORDER BY Revenue - Budget DESC LIMIT 10"
+    "SELECT Title, Release_Date, Revenue - Budget AS Net_Income FROM Movies WHERE EXTRACT(year FROM Release_Date) = " + year + " ORDER BY Revenue - Budget DESC LIMIT 10"
 
     pool.query(
       query,
@@ -33,18 +36,12 @@ const controller = {
 
         console.log(results.rows);
 
-        res.render('display_highest_grossings', {
-          title: "Top 10 Highest Grossing Movies in " + req.query.year,
+        res.render('display_highest_grossing', {
+          title: "Top 10 Highest Grossing Movies in " + year,
           movies: results.rows
         });
       }
     );
-
-    
-
-    /**res.render('highest_grossing', {
-      title: 'Top 10 Highest Grossing Movies by Year'
-    });*/
   },
 
   postHighestGrossing: function (req, res) {
@@ -65,10 +62,25 @@ const controller = {
     });
   },
 
+  /** 2 TABLE QUERIES */
+
   getCollectionEarnings: function (req, res) {
-    res.render('collection_earnings', {
-      title: 'Total Movie Collection Earnings'
-    });
+    var collection = req.query.collection;
+    var query = "SELECT c.Name, SUM(m.Revenue) FROM Collections c, Movies m WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') AND c.id = m.Belongs_To_Collection GROUP BY c.id, c.Name ORDER BY c.Name ASC"
+    
+    pool.query(
+      query,
+      (error, results) => {
+        if (error) throw error;
+
+        console.log(results.rows);
+
+        res.render('display_collection_earnings', {
+          title: "Total Movie Collection Earnings of \"" + collection + "\"",
+          collections: results.rows
+        });
+      }
+    );
   },
 
   postCollectionEarnings: function (req, res) {
@@ -90,6 +102,8 @@ const controller = {
       title: 'Highest Rated Movies by Year'
     });
   },
+
+  /** 3 TABLE QUERIES */
 
   getSimilarMovies: function (req, res) {
     res.render('similar_movies', {
@@ -114,6 +128,8 @@ const controller = {
       title: 'Top 10 Most Popular Genres by Year'
     });
   },
+
+  /** 4 TABLE QUERIES */
 
   getMovieInfo: function (req, res) {
     res.render('movie_info', {
