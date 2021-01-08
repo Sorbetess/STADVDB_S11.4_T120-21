@@ -50,7 +50,7 @@ const controller = {
 
   getPopularGenres: function (req, res) {
     res.render('popular_genres', {
-      title: "Most Popular Genres in the Year " + year
+      title: "Most Popular Genres in the Year"
     });
   },
 
