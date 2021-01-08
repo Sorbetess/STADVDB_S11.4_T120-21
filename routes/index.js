@@ -16,12 +16,12 @@ router.post('/top-10-highest-grossing-movies-by-year', (req, res) => {
   controller.postHighestGrossing(req, res);
 });
 
-router.get('/popular-movies', (req, res) => {
-  controller.getPopularMovies(req, res);
+router.get('/movie-info', (req, res) => {
+  controller.getMovieInfo(req, res);
 });
 
-router.post('/popular-movies', (req, res) => {
-  controller.postPopularMovies(req, res);
+router.post('/movie-info', (req, res) => {
+  controller.postMovieInfo(req, res);
 });
 
 router.get('/total-movie-collection-earnings', (req, res) => {
@@ -32,11 +32,11 @@ router.post('/total-movie-collection-earnings', (req, res) => {
   controller.postCollectionEarnings(req, res);
 });
 
-router.get('/highest-rated-movies-by-year', (req, res) => {
+router.get('/top-50-highest-rated-movies-by-year', (req, res) => {
   controller.getHighestRated(req, res);
 });
 
-router.post('/highest-rated-movies-by-year', (req, res) => {
+router.post('/top-50-highest-rated-movies-by-year', (req, res) => {
   controller.postHighestRated(req, res);
 });
 
@@ -56,12 +56,13 @@ router.post('/top-10-most-popular-genres-by-year', (req, res) => {
   controller.postPopularGenres(req, res);
 });
 
-router.get('/movie-info', (req, res) => {
-  controller.getMovieInfo(req, res);
+router.get('/top-50-highest-rated-movies-by-keywords', (req, res) => {
+  controller.getHighestRatedByKeywords(req, res);
 });
 
-router.post('/movie-info', (req, res) => {
-  controller.postMovieInfo(req, res);
+router.post('/top-50-highest-rated-movies-by-keywords', (req, res) => {
+  controller.postHighestRatedByKeywords(req, res);
 });
+
 
 module.exports = router;

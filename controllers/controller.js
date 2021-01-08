@@ -44,7 +44,11 @@ const controller = {
           movies: results.rows
         });
       }
-    );
+    ); 
+
+    res.render('display_highest_grossing', {
+      title: "Top 10 Highest Grossing Movies in " + year
+    });
   },
 
   postHighestGrossing: function (req, res) {
@@ -53,15 +57,15 @@ const controller = {
     });
   },
 
-  getPopularMovies: function (req, res) {
-    res.render('popular_movies', {
-      title: 'Popular Movies'
+  getMovieInfo: function (req, res) {
+    res.render('movie_info', {
+      title: 'Movie Info'
     });
   },
 
-  postPopularMovies: function (req, res) {
-    res.render('popular_movies', {
-      title: 'Popular Movies'
+  postMovieInfo: function (req, res) {
+    res.render('movie_info', {
+      title: 'Movie Info'
     });
   },
 
@@ -87,6 +91,7 @@ const controller = {
         });
       }
     );
+
   },
 
   postCollectionEarnings: function (req, res) {
@@ -130,7 +135,7 @@ const controller = {
       offset = (req.query.page - 1) * 10;
     var query = "SELECT g.Name, ROUND(AVG(m.Popularity), 2) FROM Movies m, Genres g, Movie_Genres mg WHERE EXTRACT(year FROM m.release_date) = " + year + " AND mg.id = m.id AND g.id = mg.genres AND m.title IS NOT NULL GROUP BY g.id, g.name ORDER BY AVG(m.popularity) DESC LIMIT 10 OFFSET " + offset;
     
-    pool.query(
+    /*pool.query(
       query,
       (error, results) => {
         if (error) throw error;
@@ -142,7 +147,11 @@ const controller = {
           genres: results.rows
         });
       }
-    );
+    );*/
+
+    res.render('display_popular_genres', {
+      title: "Most Popular Genres in the Year " + year
+    });
   },
 
   postPopularGenres: function (req, res) {
@@ -153,17 +162,18 @@ const controller = {
 
   /** 4 TABLE QUERIES */
 
-  getMovieInfo: function (req, res) {
-    res.render('movie_info', {
-      title: 'Movie Info'
+  getHighestRatedByKeywords: function (req, res) {
+    res.render('highest_rated_by_keywords', {
+      title: 'Top 50 Highest-Rated Movies by Keywords'
     });
   },
 
-  postMovieInfo: function (req, res) {
-    res.render('movie_info', {
-      title: 'Movie Info'
+  postHighestRatedByKeywords: function (req, res) {
+    res.render('highest_rated_by_keywords', {
+      title: 'Top 50 Highest-Rated Movies by Keywords'
     });
-  }
+  },
+
 };
 
 module.exports = controller;
