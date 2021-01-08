@@ -1,3 +1,13 @@
+const Pool = require('pg').Pool;
+
+const pool = new Pool({
+  user: '',
+  host: 'localhost',
+  database: 'movies',
+  password: '',
+  port: 5432
+});
+
 const controller = {
 
   getFavicon: function (req, res) {
@@ -15,9 +25,23 @@ const controller = {
   /** 1 TABLE QUERIES */
 
   getHighestGrossing: function (req, res) {
-    res.render('highest_grossing', {
-      title: 'Top 10 Highest Grossing Movies By Year'
-    });
+
+    var query =
+      "SELECT DISTINCT EXTRACT(year FROM release_date) as year FROM Movies WHERE release_date IS NOT NULL ORDER BY year DESC";
+
+    pool.query(
+      query,
+      (error, results) => {
+        if (error) throw error;
+
+        console.log(results.rows);
+
+        res.render('highest_grossing', {
+          title: 'Top 10 Highest Grossing Movies By Year',
+          years: results.rows
+        });
+      }
+    );
   },
 
   getMovieInfo: function (req, res) {
