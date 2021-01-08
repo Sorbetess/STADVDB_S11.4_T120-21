@@ -1,25 +1,14 @@
 const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  user: '',
+  user: 'postgres',
   host: 'localhost',
   database: 'movies',
-  password: '',
+  password: 'p@ssword',
   port: 5432
 });
 
 const controller = {
-  /** Sample query */
-  getMovies: function (req, res) {
-    pool.query(
-      'SELECT * FROM movies ORDER BY popularity DESC LIMIT 10',
-      (error, results) => {
-        if (error) throw error;
-
-        res.status(200).json(results.rows);
-      }
-    );
-  },
 
   getFavicon: function (req, res) {
     console.log('@ controller, getFavicon');
@@ -34,9 +23,28 @@ const controller = {
   },
 
   getHighestGrossing: function (req, res) {
-    res.render('highest_grossing', {
+    var query =
+    "SELECT Title, Release_Date, Revenue - Budget AS Net_Income FROM Movies WHERE EXTRACT(year FROM Release_Date) = " + req.query.year + " ORDER BY Revenue - Budget DESC LIMIT 10"
+
+    pool.query(
+      query,
+      (error, results) => {
+        if (error) throw error;
+
+        console.log(results.rows);
+
+        res.render('display_highest_grossings', {
+          title: "Top 10 Highest Grossing Movies in " + req.query.year,
+          movies: results.rows
+        });
+      }
+    );
+
+    
+
+    /**res.render('highest_grossing', {
       title: 'Top 10 Highest Grossing Movies by Year'
-    });
+    });*/
   },
 
   postHighestGrossing: function (req, res) {
