@@ -15,7 +15,12 @@ app.engine(
     defaultView: 'main',
     layoutsDir: path.join(__dirname, '/views/layouts'),
     partialsDir: path.join(__dirname, 'views/partials'),
-    stylesDir: path.join(__dirname, 'public/css')
+    stylesDir: path.join(__dirname, 'public/css'),
+    helpers: {
+      inc: function (value, options) {
+        return parseInt(value) + 1;
+      }
+    }
   })
 );
 
