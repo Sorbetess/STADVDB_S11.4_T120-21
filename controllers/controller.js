@@ -1,10 +1,10 @@
 const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  user: 'postgres',
+  user: '',
   host: 'localhost',
   database: 'movies',
-  password: 'p@ssword',
+  password: '',
   port: 5432
 });
 
@@ -118,9 +118,22 @@ const controller = {
   },
 
   getPopularGenres: function (req, res) {
-    res.render('popular_genres', {
-      title: 'Top 10 Most Popular Genres by Year'
-    });
+    var year = req.query.year;
+    var query = "SELECT g.Name, ROUND(AVG(m.Popularity), 2) FROM Movies m, Genres g, Movie_Genres mg WHERE EXTRACT(year FROM m.release_date) = " + year + " AND mg.id = m.id AND g.id = mg.genres AND m.title IS NOT NULL GROUP BY g.id, g.name ORDER BY AVG(m.popularity) DESC LIMIT 10"
+    
+    pool.query(
+      query,
+      (error, results) => {
+        if (error) throw error;
+
+        console.log(results.rows);
+
+        res.render('display_popular_genres', {
+          title: "Most Popular Genres in the Year " + year,
+          genres: results.rows
+        });
+      }
+    );
   },
 
   postPopularGenres: function (req, res) {
