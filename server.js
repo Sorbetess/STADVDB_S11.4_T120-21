@@ -15,7 +15,24 @@ app.engine(
     defaultView: 'main',
     layoutsDir: path.join(__dirname, '/views/layouts'),
     partialsDir: path.join(__dirname, 'views/partials'),
-    stylesDir: path.join(__dirname, 'public/css')
+    stylesDir: path.join(__dirname, 'public/css'),
+    helpers: {
+      inc: function (value) {
+        return parseInt(value) + 1;
+      },
+      todate: function (value) {
+        dateString = value.toUTCString();
+        dateString = dateString.split(' ').slice(0, 4).join(' ');
+        return dateString;
+      },
+      tomoney: function (value) {
+        var formatter = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        });
+        return formatter.format(value);
+      }
+    }
   })
 );
 
