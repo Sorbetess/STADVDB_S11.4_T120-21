@@ -66,7 +66,7 @@ const controller = {
 
   getCollectionEarnings: function (req, res) {
     var collection = req.query.collection;
-    var query = "SELECT c.Name, SUM(m.Revenue) FROM Collections c, Movies m WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') AND c.id = m.Belongs_To_Collection GROUP BY c.id, c.Name ORDER BY c.Name ASC"
+    var query = "SELECT c.Name, SUM(m.Revenue) FROM Collections c, Movies m WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') AND c.id = m.Belongs_To_Collection GROUP BY c.id, c.Name ORDER BY c.Name ASC LIMIT 10"
     
     pool.query(
       query,
