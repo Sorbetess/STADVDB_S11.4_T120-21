@@ -58,16 +58,20 @@ const queryController = {
         console.log(results.rows);
 
         res.render('highest_grossing', {
+
           title: "Top 10 Highest Grossing Movies in " + year,
+
           isResults: true,
           movies: results.rows,
 
           years: years.rows,
+
           
           input_option: "year",
           input_value: year,
 
           previousPage: (currentPage - 1),
+
           currentPage: currentPage,
           offset: offset,
           nextPage: parseInt(currentPage) + 1,
@@ -172,50 +176,47 @@ const queryController = {
     var limit = 10;
     var offset = (currentPage - 1) * limit;
 
-    var query = 
-    "SELECT m.title, ROUND(AVG(r.rating), 2), count(*) OVER() AS full_count " + 
-    "FROM movies m " +
-    "JOIN ratings r ON m.id = r.movie_id " +
-    "WHERE EXTRACT(YEAR FROM release_date) = " + year +
-    " GROUP BY m.id, m.title " + 
-    "ORDER BY AVG(r.rating) DESC " + 
-    "LIMIT " + limit +
-    " OFFSET " + offset;
+    var query =
+      'SELECT m.title, ROUND(AVG(r.rating), 2), count(*) OVER() AS full_count ' +
+      'FROM movies m ' +
+      'JOIN ratings r ON m.id = r.movie_id ' +
+      'WHERE EXTRACT(YEAR FROM release_date) = ' +
+      year +
+      ' GROUP BY m.id, m.title ' +
+      'ORDER BY AVG(r.rating) DESC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
     console.log(query);
 
-    pool.query(
-      yearQuery,
-      (error, years) => {
+    pool.query(yearQuery, (error, years) => {
+      if (error) throw error;
+
+      console.log(years.rows);
+
+      pool.query(query, (error, results) => {
         if (error) throw error;
+        console.log(results.rows);
 
-        console.log(years.rows);
+        res.render('highest_rated', {
+          title: 'Highest Rated Movies in the Year ' + year,
+          isResults: true,
+          movies: results.rows,
 
-        pool.query(
-          query,
-          (error, results) => {
-            if (error) throw error;
-            console.log(results.rows);
+          years: years.rows,
 
-            res.render('highest_rated', {
-              title: "Highest Rated Movies in the Year " + year,
-              isResults: true,
-              movies: results.rows,
-    
-              years: years.rows,
-              
-              input_option: "year",
-              input_value: year,
-    
-              previousPage: (currentPage - 1),
-              nextPage: parseInt(currentPage) + 1,
-              booleanPreviousPage: isTherePrevPage(currentPage),
-              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
-            });
-          }
-        );
-      }
-    );
+          input_option: 'year',
+          input_value: year,
+
+          previousPage: currentPage - 1,
+          nextPage: parseInt(currentPage) + 1,
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+        });
+      });
+    });
   },
 
   /** 3 TABLE QUERIES */
@@ -227,36 +228,38 @@ const queryController = {
     var limit = 50;
     var offset = (currentPage - 1) * limit;
 
-    var query = 
-    "SELECT m.title, string_agg(k.name, ', ') AS keywords " + 
-    "FROM Movies m, Movie_Keywords mk, Keywords k " + 
-    "WHERE m.id = mk.movie_id AND " + 
-      "m.id != (SELECT m.id " + 
-        "FROM movies m " + 
-        "WHERE LOWER(m.title) LIKE '%" + title + "%' " + 
-        "LIMIT 1) AND " + 
-      "k.id = mk.keyword_id AND " + 
-      "k.id IN (    SELECT mk.keyword_id " + 
-        "FROM Movie_Keywords mk " + 
-        "WHERE mk.movie_id = (SELECT m.id " +
-          "FROM movies m " + 
-          "WHERE LOWER(m.title) LIKE '%" + title + "%' " + 
-          "LIMIT 1)) " + 
-    "GROUP BY m.id, m.title " + 
-    "ORDER BY COUNT(mk.keyword_id) DESC " +
-    "LIMIT " + limit + 
-    " OFFSET " + offset;
+    var query =
+      "SELECT m.title, string_agg(k.name, ', ') AS keywords " +
+      'FROM Movies m, Movie_Keywords mk, Keywords k ' +
+      'WHERE m.id = mk.movie_id AND ' +
+      'm.id != (SELECT m.id ' +
+      'FROM movies m ' +
+      "WHERE LOWER(m.title) LIKE '%" +
+      title +
+      "%' " +
+      'LIMIT 1) AND ' +
+      'k.id = mk.keyword_id AND ' +
+      'k.id IN (    SELECT mk.keyword_id ' +
+      'FROM Movie_Keywords mk ' +
+      'WHERE mk.movie_id = (SELECT m.id ' +
+      'FROM movies m ' +
+      "WHERE LOWER(m.title) LIKE '%" +
+      title +
+      "%' " +
+      'LIMIT 1)) ' +
+      'GROUP BY m.id, m.title ' +
+      'ORDER BY COUNT(mk.keyword_id) DESC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
     console.log(query);
 
-    pool.query(
-      query,
-      (error, results) => {
+    pool.query(query, (error, results) => {
+      console.log(error);
 
-        console.log(error);
-
-      if(results.rows.length > 0)
-      {
+      if (results.rows.length > 0) {
         if (error) throw error;
         console.log(results.rows);
 
@@ -264,18 +267,16 @@ const queryController = {
           title: 'Top 50 Similar Movies to "' + title + '"',
           isResults: true,
           movies: results.rows,
-          
-          input_option: "title",
+
+          input_option: 'title',
           input_value: title,
 
-          previousPage: (currentPage - 1),
+          previousPage: currentPage - 1,
           nextPage: parseInt(currentPage) + 1,
           booleanPreviousPage: isTherePrevPage(currentPage),
           booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
-      }
-      else
-      {
+      } else {
         res.render('similar_movies', {
           title: 'Top 50 Similar Movies to "' + title + '"',
           isEmpty: true
@@ -290,17 +291,20 @@ const queryController = {
 
     var limit = 10;
     var offset = (currentPage - 1) * limit;
-    
+
     var query =
-    "SELECT g.Name, ROUND(AVG(m.Popularity), 2), count(*) OVER() AS full_count " + 
-    "FROM Movies m, Genres g, Movie_Genres mg " + 
-    "WHERE EXTRACT(year FROM m.release_date) = " + year +
-    " AND mg.movie_id = m.id AND g.id = mg.genre_id " + 
-    "AND m.title IS NOT NULL " +
-    "GROUP BY g.id, g.name " + 
-    "ORDER BY AVG(m.popularity) DESC " +
-    "LIMIT " + limit +
-    " OFFSET " + offset;
+      'SELECT g.Name, ROUND(AVG(m.Popularity), 2), count(*) OVER() AS full_count ' +
+      'FROM Movies m, Genres g, Movie_Genres mg ' +
+      'WHERE EXTRACT(year FROM m.release_date) = ' +
+      year +
+      ' AND mg.id = m.id AND g.id = mg.genres ' +
+      'AND m.title IS NOT NULL ' +
+      'GROUP BY g.id, g.name ' +
+      'ORDER BY AVG(m.popularity) DESC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
@@ -311,17 +315,19 @@ const queryController = {
         console.log(results.rows);
 
         res.render('popular_genres', {
-          title: "Most Popular Genres in the Year " + year,
+          title: 'Most Popular Genres in the Year ' + year,
           isResults: true,
           genres: results.rows,
 
           years: years.rows,
-              
-          input_option: "year",
+
+          input_option: 'year',
           input_value: year,
 
-          previousPage: (currentPage - 1),
+          previousPage: currentPage - 1,
           nextPage: parseInt(currentPage) + 1,
+          currentPage: currentPage,
+          offset: offset,
           booleanPreviousPage: isTherePrevPage(currentPage),
           booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
@@ -338,21 +344,23 @@ const queryController = {
     var limit = 50;
     var offset = (currentPage - 1) * limit;
 
-    var query = 
-    "SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) " + 
-    "FROM Movies m " + 
-    "JOIN Movie_Keywords mk ON m.id = mk.movie_id " +
-    "JOIN Keywords k ON mk.keyword_id = k.id " +
-    "JOIN Ratings r ON r.movie_id = m.id " + 
-    "WHERE k.name LIKE '%" + keyword + "%'" + 
-    "GROUP BY m.id, m.title " +
-    "ORDER BY AVG(r.rating) DESC " +
-    "LIMIT " + limit +
-    " OFFSET " + offset;
+    var query =
+      'SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) ' +
+      'FROM Movies m ' +
+      'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
+      'JOIN Keywords k ON mk.keyword_id = k.id ' +
+      'JOIN Ratings r ON r.movie_id = m.id ' +
+      "WHERE k.name LIKE '%" +
+      keyword +
+      "%'" +
+      'GROUP BY m.id, m.title ' +
+      'ORDER BY AVG(r.rating) DESC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
-    pool.query(
-      query,
-      (error, results) => {
+    pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
         console.log(results.rows);
