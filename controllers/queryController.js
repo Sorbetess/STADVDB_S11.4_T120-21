@@ -21,10 +21,10 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: '',
-  host: '',
+  user: 'postgres',
+  host: 'localhost',
   database: 'Movies',
-  password: '',
+  password: 'password',
   port: 5432
 });
 
@@ -172,7 +172,7 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-      'SELECT m.title, ROUND(AVG(r.rating), 2), count(*) OVER() AS full_count ' +
+      'SELECT m.title, ROUND(AVG(r.rating), 2), COUNT(r.rating) ' +
       'FROM movies m ' +
       'JOIN ratings r ON m.id = r.movieid ' +
       'WHERE EXTRACT(YEAR FROM release_date) = ' +
