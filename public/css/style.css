@@ -87,3 +87,8 @@ a:hover {
   background-color: none;
   text-decoration: none;
 }
+
+form#pages
+{
+  display: inline;
+}
