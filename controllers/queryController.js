@@ -112,22 +112,33 @@ const queryController = {
     console.log(query);
 
     pool.query(query, (error, results) => {
-      if (error) throw error;
+      
+      if(results.rows.length > 0)
+      {
+        if (error) throw error;
+        console.log(results.rows);
 
-      console.log(results.rows);
+        res.render('collection_earnings', {
+          title: 'Total Movie Collection Earnings of "' + collection + '"',
+          collections: results.rows,
+          
+          input_option: "collection",
+          input_value: collection,
 
-      res.render('collection_earnings', {
-        title: 'Total Movie Collection Earnings of "' + collection + '"',
-        collections: results.rows,
-        
-        input_option: "collection",
-        input_value: collection,
-
-        previousPage: (currentPage - 1),
-        nextPage: parseInt(currentPage) + 1,
-        booleanPreviousPage: isTherePrevPage(currentPage),
-        booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
-      });
+          previousPage: (currentPage - 1),
+          nextPage: parseInt(currentPage) + 1,
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+        });
+      }
+      else
+      {
+        res.render('collection_earnings', {
+          title: 'Total Movie Collection Earnings of "' + collection + '"',
+          isEmpty: true
+        });
+      }
+      
     });
   },
 
