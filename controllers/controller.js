@@ -26,7 +26,10 @@ const controller = {
   getHighestGrossing: function (req, res) {
 
     var query =
-      "SELECT DISTINCT EXTRACT(year FROM release_date) as year FROM Movies WHERE release_date IS NOT NULL ORDER BY year DESC";
+    "SELECT DISTINCT EXTRACT(year FROM release_date) as year " + 
+    "FROM Movies " +
+    "WHERE release_date IS NOT NULL " +
+    "ORDER BY year DESC";
 
     pool.query(
       query,
@@ -72,9 +75,26 @@ const controller = {
   },
 
   getPopularGenres: function (req, res) {
-    res.render('popular_genres', {
-      title: 'Most Popular Genres in the Year'
-    });
+
+    var query =
+    "SELECT DISTINCT EXTRACT(year FROM release_date) as year " + 
+    "FROM Movies " +
+    "WHERE release_date IS NOT NULL " +
+    "ORDER BY year DESC";
+
+    pool.query(
+      query,
+      (error, results) => {
+        if (error) throw error;
+
+        console.log(results.rows);
+
+        res.render('popular_genres', {
+          title: 'Most Popular Genres By Year',
+          years: results.rows
+        });
+      }
+    );
   },
 
   /** 4 TABLE QUERIES */
