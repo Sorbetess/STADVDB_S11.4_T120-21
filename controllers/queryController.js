@@ -126,37 +126,41 @@ const queryController = {
   },
 
   postPopularGenres: function (req, res) {
-    var year = req.query.year;
-    var offset = 0;
-    if (req.query.page) offset = (req.query.page - 1) * 10;
+    var year = req.body.year;
+    var currentPage = req.body.page;
+
+    var limit = 10;
+    var offset = (currentPage - 1) * limit;
     
     var query =
-    "SELECT g.Name, ROUND(AVG(m.Popularity), 2) " + 
+    "SELECT g.Name, ROUND(AVG(m.Popularity), 2), count(*) OVER() AS full_count " + 
     "FROM Movies m, Genres g, Movie_Genres mg " + 
     "WHERE EXTRACT(year FROM m.release_date) = " + year +
     " AND mg.id = m.id AND g.id = mg.genres " + 
     "AND m.title IS NOT NULL " +
     "GROUP BY g.id, g.name " + 
     "ORDER BY AVG(m.popularity) DESC " +
-    "LIMIT 10 OFFSET " + offset;
+    "LIMIT " + limit +
+    " OFFSET " + offset;
 
-    /*pool.query(
-        query,
-        (error, results) => {
-          if (error) throw error;
-  
-          console.log(results.rows);
-  
-          res.render('display_popular_genres', {
-            title: "Most Popular Genres in the Year " + year,
-            genres: results.rows
-          });
-        }
-      );*/
+    pool.query(
+      query,
+      (error, results) => {
+        if (error) throw error;
 
-    res.render('display_popular_genres', {
-      title: 'Most Popular Genres in the Year ' + year
-    });
+        console.log(results.rows);
+
+        res.render('display_popular_genres', {
+          title: "Most Popular Genres in the Year " + year,
+          genres: results.rows,
+          year: year,
+          previousPage: (currentPage - 1),
+          nextPage: parseInt(currentPage) + 1,
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+        });
+      }
+    );
   },
 
   /** 4 TABLE QUERIES */
