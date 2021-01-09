@@ -81,13 +81,16 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-    "SELECT c.Name, SUM(m.Revenue) " +
+    "SELECT c.Name, SUM(m.Revenue), count(*) OVER() AS full_count " +
     "FROM Collections c, Movies m " +
     "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
     "AND c.id = m.Belongs_To_Collection " +
     "GROUP BY c.id, c.Name " +
-    "ORDER BY c.Name ASC LIMIT " + limit +
+    "ORDER BY c.Name ASC " +
+    "LIMIT " + limit +
     " OFFSET " + offset;
+
+    console.log(query);
 
     pool.query(query, (error, results) => {
       if (error) throw error;
@@ -96,7 +99,12 @@ const queryController = {
 
       res.render('display_collection_earnings', {
         title: 'Total Movie Collection Earnings of "' + collection + '"',
-        collections: results.rows
+        collections: results.rows,
+        collection: collection,
+        previousPage: (currentPage - 1),
+        nextPage: parseInt(currentPage) + 1,
+        booleanPreviousPage: isTherePrevPage(currentPage),
+        booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
       });
     });
   },
