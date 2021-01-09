@@ -31,7 +31,7 @@
   {{/each}}
 
   {{#if booleanPreviousPage}}
-    <form name="year" id="year" method="post">
+    <form name="year" id="pages" method="post">
       <input type="hidden" id="year" name="year" value={{year}}>
       <input type="hidden" id="page" name="page" value={{previousPage}}>
       <button onclick="submit()">previous page</button>
@@ -39,7 +39,7 @@
   {{/if}}
 
   {{#if booleanNextPage}}
-    <form name="year" id="year" method="post">
+    <form name="year" id="pages" method="post">
       <input type="hidden" id="year" name="year" value={{year}}>
       <input type="hidden" id="page" name="page" value={{nextPage}}>
       <button onclick="submit()">next page</button>

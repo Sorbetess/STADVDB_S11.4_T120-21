@@ -9,14 +9,23 @@ const pool = new Pool({
 });
 
 const queryController = {
+
+  /** 1 TABLE QUERIES */
+
   postHighestGrossing: function (req, res) {
     var year = req.body.year;
     var currentPage = req.body.page;
-    var offset = (currentPage - 1) * 50;
 
-    console.log(year + " " + currentPage + " " + offset + " ");
+    var limit = 50;
+    var offset = (currentPage - 1) * limit;
+
     var query =
-    "SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count FROM Movies WHERE EXTRACT(year FROM Release_Date) = " + year + " ORDER BY Revenue - Budget DESC LIMIT 50 OFFSET " + offset;
+    "SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count " +
+    "FROM Movies " +
+    "WHERE EXTRACT(year FROM Release_Date) = " + year +
+    " ORDER BY Revenue - Budget DESC " + 
+    "LIMIT " + limit +
+    " OFFSET " + offset;
 
     pool.query(
       query,
@@ -25,16 +34,14 @@ const queryController = {
 
         console.log(results.rows);
 
-        var lastPage = results.rows[0].full_count/50;
+        var lastPage = results.rows[0].full_count/limit;
         var booleanPreviousPage = true;
         var booleanNextPage = true;
 
         if(currentPage <= 1)
-        {
-          booleanPreviousPage = false
-        }
+          booleanPreviousPage = false;
         
-        if(results.rows[0].full_count <= 50 || currentPage >= lastPage)
+        if(results.rows[0].full_count <= limit || currentPage >= lastPage)
           booleanNextPage = false;
 
         res.render('display_highest_grossing', {
@@ -56,53 +63,25 @@ const queryController = {
     });
   },
 
-  /** 2 TABLE QUERIES */
-  
-  postCollectionEarnings: function (req, res) {
-    var collection = req.query.collection;
-    var offset = 0;
-    if(req.query.page)
-      offset = (req.query.page - 1) * 10;
-    var query = "SELECT c.Name, SUM(m.Revenue) FROM Collections c, Movies m WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') AND c.id = m.Belongs_To_Collection GROUP BY c.id, c.Name ORDER BY c.Name ASC LIMIT 10 OFFSET " + offset;
-    
-    pool.query(
-      query,
-      (error, results) => {
-        if (error) throw error;
 
-        console.log(results.rows);
-
-        res.render('display_collection_earnings', {
-          title: "Total Movie Collection Earnings of \"" + collection + "\"",
-          collections: results.rows
-        });
-      }
-    );
-  },
-    
-  postHighestRated: function (req, res) {
-    res.render('highest_rated', {
-      title: 'Highest Rated Movies by Year'
-    });
-  },
-
-  postMovieInfo: function (req, res) {
-    res.render('movie_info', {
-      title: 'Movie Info'
-    });
-  },
 
   /** 2 TABLE QUERIES */
 
   postCollectionEarnings: function (req, res) {
-    var collection = req.query.collection;
-    var offset = 0;
-    if (req.query.page) offset = (req.query.page - 1) * 10;
+    var collection = req.body.collection;
+    var currentPage = req.body.page;
+
+    var limit = 10;
+    var offset = (currentPage - 1) * limit;
+
     var query =
-      "SELECT c.Name, SUM(m.Revenue) FROM Collections c, Movies m WHERE LOWER(c.Name) LIKE LOWER('%" +
-      collection +
-      "%') AND c.id = m.Belongs_To_Collection GROUP BY c.id, c.Name ORDER BY c.Name ASC LIMIT 10 OFFSET " +
-      offset;
+      "SELECT c.Name, SUM(m.Revenue) " +
+      "FROM Collections c, Movies m " +
+      "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
+      "AND c.id = m.Belongs_To_Collection " +
+      "GROUP BY c.id, c.Name " +
+      "ORDER BY c.Name ASC LIMIT " + limit +
+      " OFFSET " + offset;
 
     pool.query(query, (error, results) => {
       if (error) throw error;
@@ -121,6 +100,8 @@ const queryController = {
       title: 'Highest Rated Movies by Year'
     });
   },
+
+
 
   /** 3 TABLE QUERIES */
 
