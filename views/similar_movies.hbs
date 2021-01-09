@@ -32,7 +32,7 @@
   {{#each movies}}
     <div class="row">
       <div class="title center col-1">
-        <p>{{inc @index}}</p>
+        <p>{{page @index ../offset}}</p>
       </div>
       <div class="col-6">
         <div class="title">{{title}}</div>
