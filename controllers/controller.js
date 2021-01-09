@@ -32,14 +32,14 @@ const controller = {
   getHighestGrossing: function (req, res) {
     pool.query(
       yearQuery,
-      (error, results) => {
+      (error, years) => {
         if (error) throw error;
 
-        console.log(results.rows);
+        console.log(years.rows);
 
         res.render('highest_grossing', {
           title: 'Top 10 Highest Grossing Movies By Year',
-          years: results.rows
+          years: years.rows
         });
       }
     );
@@ -62,14 +62,14 @@ const controller = {
   getHighestRated: function (req, res) {
     pool.query(
       yearQuery,
-      (error, results) => {
+      (error, years) => {
         if (error) throw error;
 
-        console.log(results.rows);
+        console.log(years.rows);
 
         res.render('highest_rated', {
           title: 'Highest Rated Movies By Year',
-          years: results.rows
+          years: years.rows
         });
       }
     );
@@ -86,14 +86,14 @@ const controller = {
   getPopularGenres: function (req, res) {
     pool.query(
       yearQuery,
-      (error, results) => {
+      (error, genres) => {
         if (error) throw error;
 
-        console.log(results.rows);
+        console.log(genres.rows);
 
         res.render('popular_genres', {
           title: 'Most Popular Genres By Year',
-          years: results.rows
+          years: genres.rows
         });
       }
     );
