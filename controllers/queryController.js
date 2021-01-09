@@ -75,13 +75,13 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-      "SELECT c.Name, SUM(m.Revenue) " +
-      "FROM Collections c, Movies m " +
-      "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
-      "AND c.id = m.Belongs_To_Collection " +
-      "GROUP BY c.id, c.Name " +
-      "ORDER BY c.Name ASC LIMIT " + limit +
-      " OFFSET " + offset;
+    "SELECT c.Name, SUM(m.Revenue) " +
+    "FROM Collections c, Movies m " +
+    "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
+    "AND c.id = m.Belongs_To_Collection " +
+    "GROUP BY c.id, c.Name " +
+    "ORDER BY c.Name ASC LIMIT " + limit +
+    " OFFSET " + offset;
 
     pool.query(query, (error, results) => {
       if (error) throw error;
