@@ -23,7 +23,7 @@ const yearQuery =
 const pool = new Pool({
   user: '',
   host: 'localhost',
-  database: 'movies',
+  database: '',
   password: '',
   port: 5432
 });
@@ -284,19 +284,19 @@ const queryController = {
         console.log(results.rows);
 
         res.render('popular_genres', {
-              title: "Most Popular Genres in the Year " + year,
-              isResults: true,
-              genres: results.rows,
+          title: "Most Popular Genres in the Year " + year,
+          isResults: true,
+          genres: results.rows,
 
-              years: years.rows,
-                  
-              input_option: "year",
-              input_value: year,
-    
-              previousPage: (currentPage - 1),
-              nextPage: parseInt(currentPage) + 1,
-              booleanPreviousPage: isTherePrevPage(currentPage),
-              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          years: years.rows,
+              
+          input_option: "year",
+          input_value: year,
+
+          previousPage: (currentPage - 1),
+          nextPage: parseInt(currentPage) + 1,
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       });
     });
@@ -305,8 +305,52 @@ const queryController = {
   /** 4 TABLE QUERIES */
 
   postHighestRatedByKeywords: function (req, res) {
-    res.render('highest_rated_by_keywords', {
-      title: 'Top 50 Highest-Rated Movies by Keywords'
+    var keyword = req.body.keyword;
+    var currentPage = req.body.page;
+
+    var limit = 50;
+    var offset = (currentPage - 1) * limit;
+
+    var query = 
+    "SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) " + 
+    "FROM Movies m " + 
+    "JOIN Movie_Keywords mk ON m.id = mk.movie_id " +
+    "JOIN Keywords k ON mk.keyword_id = k.id " +
+    "JOIN Ratings r ON r.movie_id = m.id " + 
+    "WHERE k.name LIKE '%" + keyword + "%'" + 
+    "GROUP BY m.id, m.title " +
+    "ORDER BY AVG(r.rating) DESC " +
+    "LIMIT " + limit +
+    " OFFSET " + offset;
+
+    pool.query(
+      query,
+      (error, results) => {
+      if (results.rows.length > 0) {
+        if (error) throw error;
+        console.log(results.rows);
+
+        res.render('highest_rated_by_keywords', {
+          title: 'Top 50 Highest-Rated Movies by Keyword ' + keyword,
+          isResults: true,
+          movies: results.rows,
+
+          input_option: 'keyword',
+          input_value: keyword,
+
+          previousPage: currentPage - 1,
+          currentPage: currentPage,
+          offset: offset,
+          nextPage: parseInt(currentPage) + 1,
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+        });
+      } else {
+        res.render('highest_rated_by_keywords', {
+          title: 'Top 50 Highest-Rated Movies by Keyword ' + keyword,
+          isEmpty: true
+        });
+      }
     });
   }
 };
