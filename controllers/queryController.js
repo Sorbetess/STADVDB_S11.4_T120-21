@@ -228,7 +228,7 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query = 
-    "SELECT m.title, string_agg(k.name, ', ') AS keywords " + 
+    "SELECT m.title, string_agg(k.name, ', ') AS keywords, count(*) OVER() AS full_count " + 
     "FROM Movies m, Movie_Keywords mk, Keywords k " + 
     "WHERE m.id = mk.movie_id AND " + 
       "m.id != (SELECT m.id " + 
@@ -339,7 +339,7 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query = 
-    "SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) " + 
+    "SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating), count(*) OVER() AS full_count " + 
     "FROM Movies m " + 
     "JOIN Movie_Keywords mk ON m.id = mk.movie_id " +
     "JOIN Keywords k ON mk.keyword_id = k.id " +
