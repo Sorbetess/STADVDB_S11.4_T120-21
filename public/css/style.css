@@ -97,3 +97,12 @@ form#pages {
   margin-left: 1rem;
   margin-right: 1rem;
 }
+
+.subtitle {
+  font-size: 1.2rem;
+  margin: 0rem;
+}
+
+.info {
+  display: inline-block;
+}
