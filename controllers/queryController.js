@@ -22,8 +22,8 @@ const yearQuery =
 
 const pool = new Pool({
   user: '',
-  host: 'localhost',
-  database: '',
+  host: '',
+  database: 'Movies',
   password: '',
   port: 5432
 });
@@ -174,7 +174,7 @@ const queryController = {
     var query =
       'SELECT m.title, ROUND(AVG(r.rating), 2), count(*) OVER() AS full_count ' +
       'FROM movies m ' +
-      'JOIN ratings r ON m.id = r.movie_id ' +
+      'JOIN ratings r ON m.id = r.movieid ' +
       'WHERE EXTRACT(YEAR FROM release_date) = ' +
       year +
       ' GROUP BY m.id, m.title ' +
@@ -206,6 +206,8 @@ const queryController = {
           input_value: year,
 
           previousPage: currentPage - 1,
+          currentPage: currentPage,
+          offset: offset,
           nextPage: parseInt(currentPage) + 1,
           booleanPreviousPage: isTherePrevPage(currentPage),
           booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
