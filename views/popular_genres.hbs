@@ -4,25 +4,20 @@
 
   <div id="form">
 
-    <form name="genre" id="genre" method="post">
+    <form name="year" id="year" method="post">
 
-      <label for="genre">Genre:</label>
+      <label for="year">Year:</label>
 
-      <select id="genre" name="genre">
+      <select id="year" name="year">
 
-        <option value={{genre}}>temp genre</option>
-        <option value={{genre}}>temp genre</option>
-        <option value={{genre}}>temp genre</option>
-
-        <!-- loop yung para sa option?? -->
-        {{#each genres}}
-        <option value={{genre}}>{{genre}}</option>
+        {{#each years}}
+          <option value={{year}}>{{year}}</option>
         {{/each}}
 
       </select>
+      <input type="hidden" name = "page" value = '1'>
 
       <button onclick="submit()">Search</button>
-
     </form>
 
   </div>
