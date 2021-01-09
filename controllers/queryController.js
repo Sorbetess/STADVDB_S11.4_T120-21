@@ -88,7 +88,7 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-      "SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link " +
+      "SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link,  count(*) OVER() AS full_count " +
       'FROM Movies ' +
       "WHERE LOWER(title) LIKE LOWER('%" +
       title +
