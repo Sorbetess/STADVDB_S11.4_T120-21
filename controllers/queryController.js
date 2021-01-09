@@ -11,8 +11,8 @@ function isThereNextPage(queryCount, limit, currentPage) {
   var lastPage = queryCount / limit;
 
   // return false if the number of queries is less than 1 page, or if the current page is already the last page
-  return queryCount <= limit || currentPage >= lastPage ? false : true;
-}
+  return (queryCount <= limit || currentPage >= lastPage) ? false : true;
+  }
 
 const yearQuery =
   'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
