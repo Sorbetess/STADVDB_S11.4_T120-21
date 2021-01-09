@@ -8,6 +8,12 @@ const pool = new Pool({
   port: 5432
 });
 
+const yearQuery =
+"SELECT DISTINCT EXTRACT(year FROM release_date) as year " + 
+"FROM Movies " +
+"WHERE release_date IS NOT NULL " +
+"ORDER BY year DESC";
+
 const controller = {
   getFavicon: function (req, res) {
     console.log('@ controller, getFavicon');
@@ -24,15 +30,8 @@ const controller = {
   /** 1 TABLE QUERIES */
 
   getHighestGrossing: function (req, res) {
-
-    var query =
-    "SELECT DISTINCT EXTRACT(year FROM release_date) as year " + 
-    "FROM Movies " +
-    "WHERE release_date IS NOT NULL " +
-    "ORDER BY year DESC";
-
     pool.query(
-      query,
+      yearQuery,
       (error, results) => {
         if (error) throw error;
 
@@ -61,9 +60,19 @@ const controller = {
   },
 
   getHighestRated: function (req, res) {
-    res.render('highest_rated', {
-      title: 'Highest Rated Movies by Year'
-    });
+    pool.query(
+      yearQuery,
+      (error, results) => {
+        if (error) throw error;
+
+        console.log(results.rows);
+
+        res.render('highest_rated', {
+          title: 'Highest Rated Movies By Year',
+          years: results.rows
+        });
+      }
+    );
   },
 
   /** 3 TABLE QUERIES */
@@ -75,15 +84,8 @@ const controller = {
   },
 
   getPopularGenres: function (req, res) {
-
-    var query =
-    "SELECT DISTINCT EXTRACT(year FROM release_date) as year " + 
-    "FROM Movies " +
-    "WHERE release_date IS NOT NULL " +
-    "ORDER BY year DESC";
-
     pool.query(
-      query,
+      yearQuery,
       (error, results) => {
         if (error) throw error;
 
