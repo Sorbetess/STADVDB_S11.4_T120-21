@@ -55,32 +55,59 @@ const queryController = {
       pool.query(query, (error, results) => {
         if (error) throw error;
 
-            console.log(results.rows);
-    
-            res.render('highest_grossing', {
-              title: "Top 10 Highest Grossing Movies in " + year,
-              isResults: true,
-              movies: results.rows,
+        console.log(results.rows);
 
-              years: years.rows,
-              
-              input_option: "year",
-              input_value: year,
+        res.render('highest_grossing', {
+          title: "Top 10 Highest Grossing Movies in " + year,
+          isResults: true,
+          movies: results.rows,
 
-              previousPage: (currentPage - 1),
-              currentPage: currentPage,
-              offset: offset,
-              nextPage: parseInt(currentPage) + 1,
-              booleanPreviousPage: isTherePrevPage(currentPage),
-              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          years: years.rows,
+          
+          input_option: "year",
+          input_value: year,
+
+          previousPage: (currentPage - 1),
+          currentPage: currentPage,
+          offset: offset,
+          nextPage: parseInt(currentPage) + 1,
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       });
     });
   },
 
   postMovieInfo: function (req, res) {
-    res.render('movie_info', {
-      title: 'Movie Info'
+    var title = req.body.title;
+
+    var query = 
+    "SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link " +
+    "FROM Movies " +
+    "WHERE LOWER(title) LIKE LOWER('%" + title +"%') " +
+    "ORDER BY popularity DESC";
+
+    pool.query(
+      query,
+      (error, results) => {
+
+      if (results.rows.length > 0) {
+        if (error) throw error;
+        console.log(results.rows);
+
+        res.render('movie_info', {
+          title: 'Movie Info of "' + title + '"',
+          isResults: true,
+          movies: results.rows
+        });
+      } else {
+        res.render('movie_info', {
+          title: 'Movie Info of "' + title + '"',
+          isEmpty: true
+        });
+      }
+
+      
     });
   },
 
