@@ -81,13 +81,16 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-    "SELECT c.Name, SUM(m.Revenue) " +
+    "SELECT c.Name, SUM(m.Revenue), count(*) OVER() AS full_count " +
     "FROM Collections c, Movies m " +
     "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
     "AND c.id = m.Belongs_To_Collection " +
     "GROUP BY c.id, c.Name " +
-    "ORDER BY c.Name ASC LIMIT " + limit +
+    "ORDER BY c.Name ASC " +
+    "LIMIT " + limit +
     " OFFSET " + offset;
+
+    console.log(query);
 
     pool.query(query, (error, results) => {
       if (error) throw error;
@@ -96,7 +99,12 @@ const queryController = {
 
       res.render('display_collection_earnings', {
         title: 'Total Movie Collection Earnings of "' + collection + '"',
-        collections: results.rows
+        collections: results.rows,
+        collection: collection,
+        previousPage: (currentPage - 1),
+        nextPage: parseInt(currentPage) + 1,
+        booleanPreviousPage: isTherePrevPage(currentPage),
+        booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
       });
     });
   },
@@ -121,11 +129,16 @@ const queryController = {
     var year = req.query.year;
     var offset = 0;
     if (req.query.page) offset = (req.query.page - 1) * 10;
+    
     var query =
-      'SELECT g.Name, ROUND(AVG(m.Popularity), 2) FROM Movies m, Genres g, Movie_Genres mg WHERE EXTRACT(year FROM m.release_date) = ' +
-      year +
-      ' AND mg.id = m.id AND g.id = mg.genres AND m.title IS NOT NULL GROUP BY g.id, g.name ORDER BY AVG(m.popularity) DESC LIMIT 10 OFFSET ' +
-      offset;
+    "SELECT g.Name, ROUND(AVG(m.Popularity), 2) " + 
+    "FROM Movies m, Genres g, Movie_Genres mg " + 
+    "WHERE EXTRACT(year FROM m.release_date) = " + year +
+    " AND mg.id = m.id AND g.id = mg.genres " + 
+    "AND m.title IS NOT NULL " +
+    "GROUP BY g.id, g.name " + 
+    "ORDER BY AVG(m.popularity) DESC " +
+    "LIMIT 10 OFFSET " + offset;
 
     /*pool.query(
         query,
