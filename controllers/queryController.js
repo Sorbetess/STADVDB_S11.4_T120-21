@@ -97,10 +97,11 @@ const queryController = {
 
       console.log(results.rows);
 
-      res.render('display_collection_earnings', {
+      res.render('collection_earnings', {
         title: 'Total Movie Collection Earnings of "' + collection + '"',
         collections: results.rows,
         collection: collection,
+        input_value: "collection",
         previousPage: (currentPage - 1),
         nextPage: parseInt(currentPage) + 1,
         booleanPreviousPage: isTherePrevPage(currentPage),
