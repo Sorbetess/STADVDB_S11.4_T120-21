@@ -19,19 +19,16 @@
   <br>
 
   {{#if isResults}}
-    <div class="row">
-      <div class="title col-1">
-      </div>
-      <div class="title col-6">
-        <p>Title</p>
-      </div>
-      <div class="title col-5">
-        <p>Rating</p>
-      </div>
-      <div class="title col-4">
-        <p>Number of Ratings</p>
-      </div>
+  <div class="row">
+    <div class="title col-1">
     </div>
+    <div class="title col-6">
+      <p>Title</p>
+    </div>
+    <div class="title col-5">
+      <p>Rating</p>
+    </div>
+  </div>
   {{/if}}
 
   {{#each movies}}
@@ -43,10 +40,9 @@
       <div class="title">{{title}}</div>
     </div>
     <div class="col-5">
-      <p>{{round}}</p>
-    </div>
-    <div class="col-4">
-      <p>{{count}}</p>
+      <p>{{round}}
+        ({{count}})
+      </p>
     </div>
   </div>
   <hr>
