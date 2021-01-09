@@ -11,11 +11,11 @@
       <select id="year" name="year">
 
         {{#each years}}
-          <option value={{year}}>{{year}}</option>
+        <option value={{year}}>{{year}}</option>
         {{/each}}
 
       </select>
-      <input type="hidden" name = "page" value = '1'>
+      <input type="hidden" name="page" value='1'>
 
       <button onclick="submit()">Search</button>
     </form>
@@ -25,18 +25,21 @@
   <br>
 
   {{#each genres}}
-    <div class="row">
-      <div class="title center col-1">
-        <p>{{inc @index}}</p>
-      </div>
-      <div class="col-6">
-        <div class="title">{{name}}</div>
-      </div>
-      <div class="col-5">
-        <p>{{round}}</p>
-      </div>
+  <div class="row">
+    <div class="title center col-1">
+      <p>{{page @index ../offset}}</p>
     </div>
-    <hr>
+    <div class="col-6">
+      <div class="title">{{name}}</div>
+    </div>
+    <div class="col-5">
+      <p>{{round}}</p>
+    </div>
+  </div>
+  <hr>
   {{/each}}
+
+  <div id={{offset}}></div>
+
 
 </div>
