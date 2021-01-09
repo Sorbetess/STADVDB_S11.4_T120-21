@@ -1,5 +1,21 @@
 const Pool = require('pg').Pool;
 
+/** This function returns whether or not there is a previous page. */
+function isTherePrevPage(currentPage)
+{
+  // return false if the current page is 1
+  return currentPage <= 1? false : true;
+}
+
+/** This function returns whether or not there is a next page. */
+function isThereNextPage(queryCount, limit, currentPage)
+{
+  var lastPage = queryCount/limit;
+
+  // return false if the number of queries is less than 1 page, or if the current page is already the last page
+  return (queryCount <= limit || currentPage >= lastPage) ? false : true;
+}
+
 const pool = new Pool({
   user: '',
   host: 'localhost',
@@ -34,24 +50,14 @@ const queryController = {
 
         console.log(results.rows);
 
-        var lastPage = results.rows[0].full_count/limit;
-        var booleanPreviousPage = true;
-        var booleanNextPage = true;
-
-        if(currentPage <= 1)
-          booleanPreviousPage = false;
-        
-        if(results.rows[0].full_count <= limit || currentPage >= lastPage)
-          booleanNextPage = false;
-
         res.render('display_highest_grossing', {
           title: "Top 10 Highest Grossing Movies in " + year,
           movies: results.rows,
           year: year,
           previousPage: (currentPage - 1),
           nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: booleanPreviousPage,
-          booleanNextPage: booleanNextPage
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       }
     ); 
@@ -75,13 +81,13 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-      "SELECT c.Name, SUM(m.Revenue) " +
-      "FROM Collections c, Movies m " +
-      "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
-      "AND c.id = m.Belongs_To_Collection " +
-      "GROUP BY c.id, c.Name " +
-      "ORDER BY c.Name ASC LIMIT " + limit +
-      " OFFSET " + offset;
+    "SELECT c.Name, SUM(m.Revenue) " +
+    "FROM Collections c, Movies m " +
+    "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
+    "AND c.id = m.Belongs_To_Collection " +
+    "GROUP BY c.id, c.Name " +
+    "ORDER BY c.Name ASC LIMIT " + limit +
+    " OFFSET " + offset;
 
     pool.query(query, (error, results) => {
       if (error) throw error;
