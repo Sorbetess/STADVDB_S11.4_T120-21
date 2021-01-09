@@ -129,11 +129,16 @@ const queryController = {
     var year = req.query.year;
     var offset = 0;
     if (req.query.page) offset = (req.query.page - 1) * 10;
+    
     var query =
-      'SELECT g.Name, ROUND(AVG(m.Popularity), 2) FROM Movies m, Genres g, Movie_Genres mg WHERE EXTRACT(year FROM m.release_date) = ' +
-      year +
-      ' AND mg.id = m.id AND g.id = mg.genres AND m.title IS NOT NULL GROUP BY g.id, g.name ORDER BY AVG(m.popularity) DESC LIMIT 10 OFFSET ' +
-      offset;
+    "SELECT g.Name, ROUND(AVG(m.Popularity), 2) " + 
+    "FROM Movies m, Genres g, Movie_Genres mg " + 
+    "WHERE EXTRACT(year FROM m.release_date) = " + year +
+    " AND mg.id = m.id AND g.id = mg.genres " + 
+    "AND m.title IS NOT NULL " +
+    "GROUP BY g.id, g.name " + 
+    "ORDER BY AVG(m.popularity) DESC " +
+    "LIMIT 10 OFFSET " + offset;
 
     /*pool.query(
         query,
