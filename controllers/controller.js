@@ -89,7 +89,7 @@ const controller = {
       (error, years) => {
         if (error) throw error;
 
-        console.log(genres.rows);
+        console.log(years.rows);
 
         res.render('popular_genres', {
           title: 'Most Popular Genres By Year',
