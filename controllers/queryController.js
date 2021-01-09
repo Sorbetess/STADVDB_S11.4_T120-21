@@ -21,10 +21,10 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: 'postgres',
+  user: '',
   host: 'localhost',
-  database: 'movies',
-  password: 'p@ssword',
+  database: '',
+  password: '',
   port: 5432
 });
 
@@ -192,7 +192,7 @@ const queryController = {
     var query =
       'SELECT m.title, ROUND(AVG(r.rating), 2), COUNT(r.rating) ' +
       'FROM movies m ' +
-      'JOIN ratings r ON m.id = r.movieid ' +
+      'JOIN ratings r ON m.id = r.movie_id ' +
       'WHERE EXTRACT(YEAR FROM release_date) = ' +
       year +
       ' GROUP BY m.id, m.title ' +
@@ -244,28 +244,28 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-      'SELECT m.title, string_agg(DISTINCT k.name, \', \') AS keywords, count(*) OVER() AS full_count ' + 
-      'FROM Movies m JOIN Movie_Keywords mk ON m.id = mk.movie_id ' + 
-      'JOIN Keywords k ON k.id = mk.keyword_id ' + 
+      "SELECT m.title, string_agg(DISTINCT k.name, ', ') AS keywords, count(*) OVER() AS full_count " +
+      'FROM Movies m JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
+      'JOIN Keywords k ON k.id = mk.keyword_id ' +
       'WHERE m.id != (	SELECT m.id ' +
-                      'FROM movies m ' +
-                      'WHERE LOWER(m.title) LIKE \'%' + 
-                      title +
-                      '%\' ' + 
-                      'LIMIT 1) ' +
-     'AND	k.id IN ( 	SELECT DISTINCT mk.keyword_id ' +
-            'FROM Movie_keywords mk ' +
-            'JOIN Movies m ON mk.movie_id = m.id ' + 
-            'WHERE LOWER(m.title) LIKE \'%' +
-            title +
-            '%\') ' +
+      'FROM movies m ' +
+      "WHERE LOWER(m.title) LIKE '%" +
+      title +
+      "%' " +
+      'LIMIT 1) ' +
+      'AND	k.id IN ( 	SELECT DISTINCT mk.keyword_id ' +
+      'FROM Movie_keywords mk ' +
+      'JOIN Movies m ON mk.movie_id = m.id ' +
+      "WHERE LOWER(m.title) LIKE '%" +
+      title +
+      "%') " +
       'GROUP BY m.id, m.title ' +
       'ORDER BY COUNT(mk.keyword_id) DESC ' +
       'LIMIT ' +
-       limit +
+      limit +
       'OFFSET ' +
       offset;
-      
+
     console.log(query);
 
     pool.query(query, (error, results) => {
@@ -284,10 +284,10 @@ const queryController = {
           input_value: title,
 
           previousPage: currentPage - 1,
-          offset: offset//,
-         // nextPage: parseInt(currentPage) + 1,
-         // booleanPreviousPage: isTherePrevPage(currentPage),
-         // booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset //,
+          // nextPage: parseInt(currentPage) + 1,
+          // booleanPreviousPage: isTherePrevPage(currentPage),
+          // booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       } else {
         res.render('similar_movies', {
@@ -310,7 +310,7 @@ const queryController = {
       'FROM Movies m, Genres g, Movie_Genres mg ' +
       'WHERE EXTRACT(year FROM m.release_date) = ' +
       year +
-      ' AND mg.id = m.id AND g.id = mg.genres ' +
+      ' AND mg.movie_id = m.id AND g.id = mg.genre_id ' +
       'AND m.title IS NOT NULL ' +
       'GROUP BY g.id, g.name ' +
       'ORDER BY AVG(m.popularity) DESC ' +
@@ -359,9 +359,9 @@ const queryController = {
 
     var query =
       'SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) FROM Movies m ' +
-      'JOIN Movie_Keywords mk ON m.id = mk.id ' +
-      'JOIN Keywords k ON mk.keywords = k.id ' +
-      'JOIN Ratings r ON r.movieid = m.id ' +
+      'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
+      'JOIN Keywords k ON mk.keyword_id = k.id ' +
+      'JOIN Ratings r ON r.movie_id = m.id ' +
       "WHERE k.name LIKE '%" +
       keyword +
       "%'" +
