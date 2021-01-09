@@ -8,7 +8,7 @@
 
       <label for="collection">Movie Collection:</label>
       <input type="text" id="collection" name="collection" onkeydown="pressedEnter(event)">
-      <input type="hidden" name = "page" value = '1'>
+      <input type="hidden" name="page" value='1'>
 
       <button onclick="submit()">Search</button>
 
@@ -34,7 +34,7 @@
   {{#each collections}}
   <div class="row">
     <div class="title center col-1">
-      <p>{{inc @index}}</p>
+      <p>{{page @index ../offset}}</p>
     </div>
     <div class="col-6">
       <div class="title">{{name}}</div>
@@ -45,5 +45,7 @@
   </div>
   <hr>
   {{/each}}
+
+  <div id={{offset}}></div>
 
 </div>
