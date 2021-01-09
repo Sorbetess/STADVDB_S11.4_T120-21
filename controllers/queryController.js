@@ -16,11 +16,17 @@ function isThereNextPage(queryCount, limit, currentPage)
   return (queryCount <= limit || currentPage >= lastPage) ? false : true;
 }
 
+const yearQuery =
+"SELECT DISTINCT EXTRACT(year FROM release_date) as year " + 
+"FROM Movies " +
+"WHERE release_date IS NOT NULL " +
+"ORDER BY year DESC";
+
 const pool = new Pool({
-  user: '',
+  user: 'postgres',
   host: 'localhost',
   database: 'movies',
-  password: '',
+  password: 'p@ssword',
   port: 5432
 });
 
@@ -44,23 +50,36 @@ const queryController = {
     " OFFSET " + offset;
 
     pool.query(
-      query,
-      (error, results) => {
+      yearQuery,
+      (error, years) => {
         if (error) throw error;
 
-        console.log(results.rows);
+        pool.query(
+          query,
+          (error, results) => {
+            if (error) throw error;
+    
+            console.log(results.rows);
+    
+            res.render('highest_grossing', {
+              title: "Top 10 Highest Grossing Movies in " + year,
+              movies: results.rows,
 
-        res.render('display_highest_grossing', {
-          title: "Top 10 Highest Grossing Movies in " + year,
-          movies: results.rows,
-          year: year,
-          previousPage: (currentPage - 1),
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
-        });
+              years: years.rows,
+              
+              input_option: "year",
+              input_value: year,
+              
+              previousPage: (currentPage - 1),
+              nextPage: parseInt(currentPage) + 1,
+              booleanPreviousPage: isTherePrevPage(currentPage),
+              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+            });
+          }
+        ); 
+        
       }
-    ); 
+    );
   },
   
   postMovieInfo: function (req, res) {
@@ -97,10 +116,13 @@ const queryController = {
 
       console.log(results.rows);
 
-      res.render('display_collection_earnings', {
+      res.render('collection_earnings', {
         title: 'Total Movie Collection Earnings of "' + collection + '"',
         collections: results.rows,
-        collection: collection,
+        
+        input_option: "collection",
+        input_value: collection,
+
         previousPage: (currentPage - 1),
         nextPage: parseInt(currentPage) + 1,
         booleanPreviousPage: isTherePrevPage(currentPage),
