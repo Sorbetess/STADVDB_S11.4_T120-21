@@ -82,6 +82,10 @@ const queryController = {
 
   postMovieInfo: function (req, res) {
     var title = req.body.title;
+    var currentPage = req.body.page;
+
+    var limit = 5;
+    var offset = (currentPage - 1) * limit;
 
     var query =
       "SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link " +
@@ -89,7 +93,11 @@ const queryController = {
       "WHERE LOWER(title) LIKE LOWER('%" +
       title +
       "%') " +
-      'ORDER BY popularity DESC';
+      'ORDER BY popularity DESC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
@@ -99,7 +107,17 @@ const queryController = {
         res.render('movie_info', {
           title: 'Movie Info of "' + title + '"',
           isResults: true,
-          movies: results.rows
+          movies: results.rows,
+
+          input_option: 'title',
+          input_value: title,
+
+          previousPage: currentPage - 1,
+          currentPage: currentPage,
+          offset: offset,
+          nextPage: parseInt(currentPage) + 1,
+          booleanPreviousPage: isTherePrevPage(currentPage),
+          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       } else {
         res.render('movie_info', {

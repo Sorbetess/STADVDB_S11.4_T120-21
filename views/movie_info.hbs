@@ -8,6 +8,7 @@
 
       <label for="title">Movie Title:</label>
       <input type="text" id="title" name="title" onkeydown="pressedEnter(event)">
+      <input type="hidden" name="page" value='1'>
 
       <button onclick="submit()">Search</button>
 
@@ -17,30 +18,27 @@
 
   <br>
 
-  {{#if isResults}}
-    <div class="row">
-      <div class="title col-1">
-      </div>
-      <div class="title col-6">
-        <p>Title</p>
-      </div>
-      <div class="title col-5">
-        <p>need to edit </p>
-      </div>
-    </div>
-  {{/if}}
-
   {{#each movies}}
   <div class="row">
-    <div class="title center col-1">
-      <p>edit</p>
+    <div class="title">
+      <p>{{title}}</p>
     </div>
-    <div class="col-6">
-      <div class="title">{{title}}</div>
-    </div>
-    <div class="col-5">
-      <p>need to edit</p>
-    </div>
+  </div>
+
+  <div class="row info">
+    <p>{{tagline}}</p>
+    <p>
+      Release Date: {{todate release_date}}<br>
+      Runtime: {{runtime}} mins<br>
+      Tagline: {{tagline}}<br>
+      Popuarity: {{popularity}}<br>
+      Link: <a href={{imdb_link}}>{{imdb_link}}</a>
+    </p>
+
+
+    <p class="subtitle">Overview </p>
+    <p>{{overview}}</p>
+
   </div>
   <hr>
   {{/each}}
