@@ -69,7 +69,7 @@ const queryController = {
               
               input_option: "year",
               input_value: year,
-              
+
               previousPage: (currentPage - 1),
               nextPage: parseInt(currentPage) + 1,
               booleanPreviousPage: isTherePrevPage(currentPage),
@@ -166,23 +166,37 @@ const queryController = {
     " OFFSET " + offset;
 
     pool.query(
-      query,
-      (error, results) => {
+      yearQuery,
+      (error, years) => {
         if (error) throw error;
 
-        console.log(results.rows);
+        pool.query(
+          query,
+          (error, results) => {
+            if (error) throw error;
+    
+            console.log(results.rows);
+    
+            res.render('popular_genres', {
+              title: "Most Popular Genres in the Year " + year,
+              genres: results.rows,
 
-        res.render('display_popular_genres', {
-          title: "Most Popular Genres in the Year " + year,
-          genres: results.rows,
-          year: year,
-          previousPage: (currentPage - 1),
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
-        });
+              years: years.rows,
+                  
+              input_option: "year",
+              input_value: year,
+    
+              previousPage: (currentPage - 1),
+              nextPage: parseInt(currentPage) + 1,
+              booleanPreviousPage: isTherePrevPage(currentPage),
+              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+            });
+          }
+        );
       }
     );
+
+    
   },
 
   /** 4 TABLE QUERIES */
