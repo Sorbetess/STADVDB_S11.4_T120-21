@@ -52,7 +52,7 @@ const controller = {
 
   getCollectionEarnings: function (req, res) {
     res.render('collection_earnings', {
-      title: 'Highest Rated Movies by Year'
+      title: 'Total Movie Collection Earnings'
     });
   },
 

@@ -24,6 +24,19 @@
 
   <br>
 
+  {{#if isResults}}
+    <div class="row">
+      <div class="title col-1">
+      </div>
+      <div class="title col-6">
+        <p>Movie</p>
+      </div>
+      <div class="title col-5">
+        <p>Income</p>
+      </div>
+    </div>
+  {{/if}}
+
   {{#each movies}}
   <div class="row">
     <div class="title center col-1">

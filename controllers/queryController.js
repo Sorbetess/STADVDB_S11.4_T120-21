@@ -23,8 +23,8 @@ const yearQuery =
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'Movies',
-  password: 'password',
+  database: 'movies',
+  password: 'p@ssword',
   port: 5432
 });
 
@@ -55,23 +55,24 @@ const queryController = {
       pool.query(query, (error, results) => {
         if (error) throw error;
 
-        console.log(results.rows);
+            console.log(results.rows);
+    
+            res.render('highest_grossing', {
+              title: "Top 10 Highest Grossing Movies in " + year,
+              isResults: true,
+              movies: results.rows,
 
-        res.render('highest_grossing', {
-          title: 'Top 10 Highest Grossing Movies in ' + year,
-          movies: results.rows,
+              years: years.rows,
+              
+              input_option: "year",
+              input_value: year,
 
-          years: years.rows,
-
-          input_option: 'year',
-          input_value: year,
-
-          previousPage: currentPage - 1,
-          currentPage: currentPage,
-          offset: offset,
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+              previousPage: (currentPage - 1),
+              currentPage: currentPage,
+              offset: offset,
+              nextPage: parseInt(currentPage) + 1,
+              booleanPreviousPage: isTherePrevPage(currentPage),
+              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       });
     });
@@ -115,6 +116,7 @@ const queryController = {
 
         res.render('collection_earnings', {
           title: 'Total Movie Collection Earnings of "' + collection + '"',
+          isResults: true,
           collections: results.rows,
 
           input_option: 'collection',
@@ -137,9 +139,56 @@ const queryController = {
   },
 
   postHighestRated: function (req, res) {
-    res.render('highest_rated', {
-      title: 'Highest Rated Movies by Year'
-    });
+    var year = req.body.year;
+    var currentPage = req.body.page;
+
+    var limit = 10;
+    var offset = (currentPage - 1) * limit;
+
+    var query = 
+    "SELECT m.title, ROUND(AVG(r.rating), 2), count(*) OVER() AS full_count " + 
+    "FROM movies m " +
+    "JOIN ratings r ON m.id = r.movieid " +
+    "WHERE EXTRACT(YEAR FROM release_date) = " + year +
+    " GROUP BY m.id, m.title " + 
+    "ORDER BY AVG(r.rating) DESC " + 
+    "LIMIT " + limit +
+    " OFFSET " + offset;
+
+    console.log(query);
+
+    pool.query(
+      yearQuery,
+      (error, years) => {
+        if (error) throw error;
+
+        console.log(years.rows);
+
+        pool.query(
+          query,
+          (error, results) => {
+            if (error) throw error;
+            console.log(results.rows);
+
+            res.render('highest_rated', {
+              title: "Highest Rated Movies in the Year " + year,
+              isResults: true,
+              movies: results.rows,
+    
+              years: years.rows,
+              
+              input_option: "year",
+              input_value: year,
+    
+              previousPage: (currentPage - 1),
+              nextPage: parseInt(currentPage) + 1,
+              booleanPreviousPage: isTherePrevPage(currentPage),
+              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+            });
+          }
+        );
+      }
+    );
   },
 
   /** 3 TABLE QUERIES */
@@ -180,20 +229,19 @@ const queryController = {
         console.log(results.rows);
 
         res.render('popular_genres', {
-          title: 'Most Popular Genres in the Year ' + year,
-          genres: results.rows,
+              title: "Most Popular Genres in the Year " + year,
+              isResults: true,
+              genres: results.rows,
 
-          years: years.rows,
-
-          input_option: 'year',
-          input_value: year,
-
-          previousPage: currentPage - 1,
-          currentPage: currentPage,
-          offset: offset,
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+              years: years.rows,
+                  
+              input_option: "year",
+              input_value: year,
+    
+              previousPage: (currentPage - 1),
+              nextPage: parseInt(currentPage) + 1,
+              booleanPreviousPage: isTherePrevPage(currentPage),
+              booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       });
     });
