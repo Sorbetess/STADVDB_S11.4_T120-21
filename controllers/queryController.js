@@ -23,8 +23,8 @@ const yearQuery =
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'Movies',
-  password: 'password',
+  database: 'movies',
+  password: 'p@ssword',
   port: 5432
 });
 
@@ -58,7 +58,7 @@ const queryController = {
         console.log(results.rows);
 
         res.render('highest_grossing', {
-          title: 'Top 10 Highest Grossing Movies in ' + year,
+          title: 'Top 50 Highest Grossing Movies in ' + year,
 
           isResults: true,
           movies: results.rows,
@@ -244,31 +244,28 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-      "SELECT m.title, string_agg(k.name, ', ') AS keywords " +
-      'FROM Movies m, Movie_Keywords mk, Keywords k ' +
-      'WHERE m.id = mk.movie_id AND ' +
-      'm.id != (SELECT m.id ' +
-      'FROM movies m ' +
-      "WHERE LOWER(m.title) LIKE '%" +
-      title +
-      "%' " +
-      'LIMIT 1) AND ' +
-      'k.id = mk.keyword_id AND ' +
-      'k.id IN (    SELECT mk.keyword_id ' +
-      'FROM Movie_Keywords mk ' +
-      'WHERE mk.movie_id = (SELECT m.id ' +
-      'FROM movies m ' +
-      "WHERE LOWER(m.title) LIKE '%" +
-      title +
-      "%' " +
-      'LIMIT 1)) ' +
+      'SELECT m.title, string_agg(DISTINCT k.name, \', \') AS keywords, count(*) OVER() AS full_count ' + 
+      'FROM Movies m JOIN Movie_Keywords mk ON m.id = mk.movie_id ' + 
+      'JOIN Keywords k ON k.id = mk.keyword_id ' + 
+      'WHERE m.id != (	SELECT m.id ' +
+                      'FROM movies m ' +
+                      'WHERE LOWER(m.title) LIKE \'%' + 
+                      title +
+                      '%\' ' + 
+                      'LIMIT 1) ' +
+     'AND	k.id IN ( 	SELECT DISTINCT mk.keyword_id ' +
+            'FROM Movie_keywords mk ' +
+            'JOIN Movies m ON mk.movie_id = m.id ' + 
+            'WHERE LOWER(m.title) LIKE \'%' +
+            title +
+            '%\') ' +
       'GROUP BY m.id, m.title ' +
       'ORDER BY COUNT(mk.keyword_id) DESC ' +
       'LIMIT ' +
-      limit +
-      ' OFFSET ' +
+       limit +
+      'OFFSET ' +
       offset;
-
+      
     console.log(query);
 
     pool.query(query, (error, results) => {
@@ -287,9 +284,10 @@ const queryController = {
           input_value: title,
 
           previousPage: currentPage - 1,
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset//,
+         // nextPage: parseInt(currentPage) + 1,
+         // booleanPreviousPage: isTherePrevPage(currentPage),
+         // booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       } else {
         res.render('similar_movies', {

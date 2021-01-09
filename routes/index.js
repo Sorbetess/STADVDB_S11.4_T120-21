@@ -9,11 +9,11 @@ router.get('/', (req, res) => {
   controller.getHome(req, res);
 });
 
-router.get('/top-10-highest-grossing-movies-by-year', (req, res) => {
+router.get('/top-50-highest-grossing-movies-by-year', (req, res) => {
   controller.getHighestGrossing(req, res);
 });
 
-router.post('/top-10-highest-grossing-movies-by-year', (req, res) => {
+router.post('/top-50-highest-grossing-movies-by-year', (req, res) => {
   queryController.postHighestGrossing(req, res);
 });
 
