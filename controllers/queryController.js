@@ -21,10 +21,10 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: '',
+  user: 'postgres',
   host: 'localhost',
-  database: '',
-  password: '',
+  database: 'movies',
+  password: 'p@ssword',
   port: 5432
 });
 
@@ -71,10 +71,10 @@ const queryController = {
           previousPage: currentPage - 1,
 
           currentPage: currentPage,
-          offset: offset,
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset//,
+          //nextPage: parseInt(currentPage) + 1,
+          //booleanPreviousPage: isTherePrevPage(currentPage),
+          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       });
     });
@@ -186,7 +186,7 @@ const queryController = {
     var year = req.body.year;
     var currentPage = req.body.page;
 
-    var limit = 10;
+    var limit = 50;
     var offset = (currentPage - 1) * limit;
 
     var query =
@@ -214,7 +214,7 @@ const queryController = {
         console.log(results.rows);
 
         res.render('highest_rated', {
-          title: 'Highest Rated Movies in the Year ' + year,
+          title: 'Top 50 Highest Rated Movies in the Year ' + year,
           isResults: true,
           movies: results.rows,
 
@@ -225,10 +225,10 @@ const queryController = {
 
           previousPage: currentPage - 1,
           currentPage: currentPage,
-          offset: offset,
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset//,
+          //nextPage: parseInt(currentPage) + 1,
+          //booleanPreviousPage: isTherePrevPage(currentPage),
+          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       });
     });
@@ -315,9 +315,9 @@ const queryController = {
       'GROUP BY g.id, g.name ' +
       'ORDER BY AVG(m.popularity) DESC ' +
       'LIMIT ' +
-      limit +
-      ' OFFSET ' +
-      offset;
+      limit// +
+      //' OFFSET ' +
+      //offset;
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
@@ -335,14 +335,14 @@ const queryController = {
           years: years.rows,
 
           input_option: 'year',
-          input_value: year,
+          input_value: year//,
 
-          previousPage: currentPage - 1,
-          nextPage: parseInt(currentPage) + 1,
-          currentPage: currentPage,
-          offset: offset,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          //previousPage: currentPage - 1,
+          //nextPage: parseInt(currentPage) + 1,
+          //currentPage: currentPage,
+          //offset: offset,
+          //booleanPreviousPage: isTherePrevPage(currentPage),
+          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       });
     });
@@ -387,10 +387,10 @@ const queryController = {
 
           previousPage: currentPage - 1,
           currentPage: currentPage,
-          offset: offset,
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset//,
+          //nextPage: parseInt(currentPage) + 1,
+          //booleanPreviousPage: isTherePrevPage(currentPage),
+          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
       } else {
         res.render('highest_rated_by_keywords', {
