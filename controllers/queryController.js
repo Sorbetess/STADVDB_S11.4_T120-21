@@ -21,10 +21,10 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: '',
+  user: 'postgres',
   host: 'localhost',
-  database: '',
-  password: '',
+  database: 'Movies',
+  password: 'password',
   port: 5432
 });
 
@@ -58,19 +58,17 @@ const queryController = {
         console.log(results.rows);
 
         res.render('highest_grossing', {
-
-          title: "Top 10 Highest Grossing Movies in " + year,
+          title: 'Top 10 Highest Grossing Movies in ' + year,
 
           isResults: true,
           movies: results.rows,
 
           years: years.rows,
 
-          
-          input_option: "year",
+          input_option: 'year',
           input_value: year,
 
-          previousPage: (currentPage - 1),
+          previousPage: currentPage - 1,
 
           currentPage: currentPage,
           offset: offset,
@@ -85,16 +83,15 @@ const queryController = {
   postMovieInfo: function (req, res) {
     var title = req.body.title;
 
-    var query = 
-    "SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link " +
-    "FROM Movies " +
-    "WHERE LOWER(title) LIKE LOWER('%" + title +"%') " +
-    "ORDER BY popularity DESC";
+    var query =
+      "SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link " +
+      'FROM Movies ' +
+      "WHERE LOWER(title) LIKE LOWER('%" +
+      title +
+      "%') " +
+      'ORDER BY popularity DESC';
 
-    pool.query(
-      query,
-      (error, results) => {
-
+    pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
         console.log(results.rows);
@@ -110,8 +107,6 @@ const queryController = {
           isEmpty: true
         });
       }
-
-      
     });
   },
 
@@ -345,11 +340,10 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-      'SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) ' +
-      'FROM Movies m ' +
-      'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
-      'JOIN Keywords k ON mk.keyword_id = k.id ' +
-      'JOIN Ratings r ON r.movie_id = m.id ' +
+      'SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) FROM Movies m ' +
+      'JOIN Movie_Keywords mk ON m.id = mk.id ' +
+      'JOIN Keywords k ON mk.keywords = k.id ' +
+      'JOIN Ratings r ON r.movieid = m.id ' +
       "WHERE k.name LIKE '%" +
       keyword +
       "%'" +
