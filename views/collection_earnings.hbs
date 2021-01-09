@@ -16,4 +16,21 @@
 
   </div>
 
+  <br>
+
+  {{#each collections}}
+  <div class="row">
+    <div class="title center col-1">
+      <p>{{inc @index}}</p>
+    </div>
+    <div class="col-6">
+      <div class="title">{{name}}</div>
+    </div>
+    <div class="col-5">
+      <p>{{tomoney sum}}</p>
+    </div>
+  </div>
+  <hr>
+  {{/each}}
+
 </div>
