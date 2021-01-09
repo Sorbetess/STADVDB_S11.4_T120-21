@@ -23,10 +23,10 @@ const yearQuery =
 "ORDER BY year DESC";
 
 const pool = new Pool({
-  user: 'postgres',
+  user: '',
   host: 'localhost',
   database: 'movies',
-  password: 'p@ssword',
+  password: '',
   port: 5432
 });
 
