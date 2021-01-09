@@ -1,7 +1,6 @@
 <div class="container">
   <h2>{{ title }}</h2>
   <br>
-
   <div class="row">
     <div class="title col-1">
     </div>
@@ -16,7 +15,7 @@
   {{#each collections}}
   <div class="row">
     <div class="title center col-1">
-      <p>{{inc @index}}</p>
+      <p>{{page @index ../offset}}</p>
     </div>
     <div class="col-6">
       <div class="title">{{name}}</div>
@@ -28,20 +27,29 @@
   <hr>
   {{/each}}
 
-  {{#if booleanPreviousPage}}
-    <form name="year" id="pages" method="post">
-      <input type="hidden" id="collection" name="collection" value={{collection}}>
-      <input type="hidden" id="page" name="page" value={{previousPage}}>
-      <button onclick="submit()">previous page</button>
-    </form>
-  {{/if}}
+  <div class='pagenav'>
 
-  {{#if booleanNextPage}}
-    <form name="year" id="pages" method="post">
-      <input type="hidden" id="collection" name="collection" value={{collection}}>
-      <input type="hidden" id="page" name="page" value={{nextPage}}>
-      <button onclick="submit()">next page</button>
-    </form>
-  {{/if}}
+    <div class='row'>
+      {{#if booleanPreviousPage}}
+      <form name="year" id="pages" method="post">
+        <input type="hidden" id="year" name="year" value={{year}}>
+        <input type="hidden" id="page" name="page" value={{previousPage}}>
+        <button onclick="submit()">previous page</button>
+      </form>
+      {{/if}}
 
+      <p class="page">Page {{currentPage}}</p>
+
+      {{#if booleanNextPage}}
+      <form name="year" id="pages" method="post">
+        <input type="hidden" id="year" name="year" value={{year}}>
+        <input type="hidden" id="page" name="page" value={{nextPage}}>
+        <button onclick="submit()">next page</button>
+      </form>
+      {{/if}}
+    </div>
+
+  </div>
+
+  <div id={{offset}}></div>
 </div>

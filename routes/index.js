@@ -65,5 +65,4 @@ router.post('/top-50-highest-rated-movies-by-keywords', (req, res) => {
   queryController.postHighestRatedByKeywords(req, res);
 });
 
-
 module.exports = router;

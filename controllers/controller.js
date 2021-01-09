@@ -1,18 +1,18 @@
 const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  user: '',
+  user: 'postgres',
   host: 'localhost',
-  database: 'movies',
-  password: '',
+  database: 'Movies',
+  password: 'password',
   port: 5432
 });
 
 const yearQuery =
-"SELECT DISTINCT EXTRACT(year FROM release_date) as year " + 
-"FROM Movies " +
-"WHERE release_date IS NOT NULL " +
-"ORDER BY year DESC";
+  'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
+  'FROM Movies ' +
+  'WHERE release_date IS NOT NULL ' +
+  'ORDER BY year DESC';
 
 const controller = {
   getFavicon: function (req, res) {
@@ -30,19 +30,16 @@ const controller = {
   /** 1 TABLE QUERIES */
 
   getHighestGrossing: function (req, res) {
-    pool.query(
-      yearQuery,
-      (error, results) => {
-        if (error) throw error;
+    pool.query(yearQuery, (error, results) => {
+      if (error) throw error;
 
-        console.log(results.rows);
+      console.log(results.rows);
 
-        res.render('highest_grossing', {
-          title: 'Top 10 Highest Grossing Movies By Year',
-          years: results.rows
-        });
-      }
-    );
+      res.render('highest_grossing', {
+        title: 'Top 10 Highest Grossing Movies By Year',
+        years: results.rows
+      });
+    });
   },
 
   getMovieInfo: function (req, res) {
@@ -60,19 +57,16 @@ const controller = {
   },
 
   getHighestRated: function (req, res) {
-    pool.query(
-      yearQuery,
-      (error, results) => {
-        if (error) throw error;
+    pool.query(yearQuery, (error, results) => {
+      if (error) throw error;
 
-        console.log(results.rows);
+      console.log(results.rows);
 
-        res.render('highest_rated', {
-          title: 'Highest Rated Movies By Year',
-          years: results.rows
-        });
-      }
-    );
+      res.render('highest_rated', {
+        title: 'Highest Rated Movies By Year',
+        years: results.rows
+      });
+    });
   },
 
   /** 3 TABLE QUERIES */
@@ -84,19 +78,16 @@ const controller = {
   },
 
   getPopularGenres: function (req, res) {
-    pool.query(
-      yearQuery,
-      (error, results) => {
-        if (error) throw error;
+    pool.query(yearQuery, (error, results) => {
+      if (error) throw error;
 
-        console.log(results.rows);
+      console.log(results.rows);
 
-        res.render('popular_genres', {
-          title: 'Most Popular Genres By Year',
-          years: results.rows
-        });
-      }
-    );
+      res.render('popular_genres', {
+        title: 'Most Popular Genres By Year',
+        years: results.rows
+      });
+    });
   },
 
   /** 4 TABLE QUERIES */

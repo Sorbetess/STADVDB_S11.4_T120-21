@@ -15,7 +15,7 @@
   {{#each movies}}
   <div class="row">
     <div class="title center col-1">
-      <p>{{inc @index}}</p>
+      <p>{{page @index ../offset}}</p>
     </div>
     <div class="col-6">
       <div class="title">{{title}}</div>
@@ -30,22 +30,25 @@
   <hr>
   {{/each}}
 
-  {{#if booleanPreviousPage}}
+  <div class='row'>
+    {{#if booleanPreviousPage}}
     <form name="year" id="pages" method="post">
       <input type="hidden" id="year" name="year" value={{year}}>
       <input type="hidden" id="page" name="page" value={{previousPage}}>
       <button onclick="submit()">previous page</button>
     </form>
-  {{/if}}
+    {{/if}}
 
-  {{#if booleanNextPage}}
+    <p class="page">Page {{currentPage}}</p>
+
+    {{#if booleanNextPage}}
     <form name="year" id="pages" method="post">
       <input type="hidden" id="year" name="year" value={{year}}>
       <input type="hidden" id="page" name="page" value={{nextPage}}>
       <button onclick="submit()">next page</button>
     </form>
-  {{/if}}
+    {{/if}}
+  </div>
 
-  
-
+  <div id={{offset}}></div>
 </div>

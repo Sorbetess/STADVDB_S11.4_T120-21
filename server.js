@@ -17,8 +17,8 @@ app.engine(
     partialsDir: path.join(__dirname, 'views/partials'),
     stylesDir: path.join(__dirname, 'public/css'),
     helpers: {
-      inc: function (value) {
-        return parseInt(value) + 1;
+      page: function (value, offset) {
+        return parseInt(value) + parseInt(offset) + 1;
       },
       todate: function (value) {
         dateString = value.toUTCString();

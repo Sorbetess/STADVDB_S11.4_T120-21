@@ -1,19 +1,17 @@
 const Pool = require('pg').Pool;
 
 /** This function returns whether or not there is a previous page. */
-function isTherePrevPage(currentPage)
-{
+function isTherePrevPage(currentPage) {
   // return false if the current page is 1
-  return currentPage <= 1? false : true;
+  return currentPage <= 1 ? false : true;
 }
 
 /** This function returns whether or not there is a next page. */
-function isThereNextPage(queryCount, limit, currentPage)
-{
-  var lastPage = queryCount/limit;
+function isThereNextPage(queryCount, limit, currentPage) {
+  var lastPage = queryCount / limit;
 
   // return false if the number of queries is less than 1 page, or if the current page is already the last page
-  return (queryCount <= limit || currentPage >= lastPage) ? false : true;
+  return queryCount <= limit || currentPage >= lastPage ? false : true;
 }
 
 const pool = new Pool({
@@ -25,7 +23,6 @@ const pool = new Pool({
 });
 
 const queryController = {
-
   /** 1 TABLE QUERIES */
 
   postHighestGrossing: function (req, res) {
@@ -36,40 +33,40 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-    "SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count " +
-    "FROM Movies " +
-    "WHERE EXTRACT(year FROM Release_Date) = " + year +
-    " ORDER BY Revenue - Budget DESC " + 
-    "LIMIT " + limit +
-    " OFFSET " + offset;
+      'SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count ' +
+      'FROM Movies ' +
+      'WHERE EXTRACT(year FROM Release_Date) = ' +
+      year +
+      ' ORDER BY Revenue - Budget DESC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
-    pool.query(
-      query,
-      (error, results) => {
-        if (error) throw error;
+    pool.query(query, (error, results) => {
+      if (error) throw error;
 
-        console.log(results.rows);
+      console.log(results.rows);
 
-        res.render('display_highest_grossing', {
-          title: "Top 10 Highest Grossing Movies in " + year,
-          movies: results.rows,
-          year: year,
-          previousPage: (currentPage - 1),
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
-        });
-      }
-    ); 
-  },
-  
-  postMovieInfo: function (req, res) {
-    res.render('movie_info', {
-      title: 'Movie Info',
+      res.render('display_highest_grossing', {
+        title: 'Top 10 Highest Grossing Movies in ' + year,
+        movies: results.rows,
+        year: year,
+        previousPage: currentPage - 1,
+        currentPage: currentPage,
+        offset: offset,
+        nextPage: parseInt(currentPage) + 1,
+        booleanPreviousPage: isTherePrevPage(currentPage),
+        booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+      });
     });
   },
 
-
+  postMovieInfo: function (req, res) {
+    res.render('movie_info', {
+      title: 'Movie Info'
+    });
+  },
 
   /** 2 TABLE QUERIES */
 
@@ -81,14 +78,18 @@ const queryController = {
     var offset = (currentPage - 1) * limit;
 
     var query =
-    "SELECT c.Name, SUM(m.Revenue), count(*) OVER() AS full_count " +
-    "FROM Collections c, Movies m " +
-    "WHERE LOWER(c.Name) LIKE LOWER('%" + collection + "%') " +
-    "AND c.id = m.Belongs_To_Collection " +
-    "GROUP BY c.id, c.Name " +
-    "ORDER BY c.Name ASC " +
-    "LIMIT " + limit +
-    " OFFSET " + offset;
+      'SELECT c.Name, SUM(m.Revenue), count(*) OVER() AS full_count ' +
+      'FROM Collections c, Movies m ' +
+      "WHERE LOWER(c.Name) LIKE LOWER('%" +
+      collection +
+      "%') " +
+      'AND c.id = m.Belongs_To_Collection ' +
+      'GROUP BY c.id, c.Name ' +
+      'ORDER BY c.Name ASC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
     console.log(query);
 
@@ -101,7 +102,9 @@ const queryController = {
         title: 'Total Movie Collection Earnings of "' + collection + '"',
         collections: results.rows,
         collection: collection,
-        previousPage: (currentPage - 1),
+        previousPage: currentPage - 1,
+        currentPage: currentPage,
+        offset: offset,
         nextPage: parseInt(currentPage) + 1,
         booleanPreviousPage: isTherePrevPage(currentPage),
         booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
@@ -114,8 +117,6 @@ const queryController = {
       title: 'Highest Rated Movies by Year'
     });
   },
-
-
 
   /** 3 TABLE QUERIES */
 
@@ -131,36 +132,37 @@ const queryController = {
 
     var limit = 10;
     var offset = (currentPage - 1) * limit;
-    
+
     var query =
-    "SELECT g.Name, ROUND(AVG(m.Popularity), 2), count(*) OVER() AS full_count " + 
-    "FROM Movies m, Genres g, Movie_Genres mg " + 
-    "WHERE EXTRACT(year FROM m.release_date) = " + year +
-    " AND mg.id = m.id AND g.id = mg.genres " + 
-    "AND m.title IS NOT NULL " +
-    "GROUP BY g.id, g.name " + 
-    "ORDER BY AVG(m.popularity) DESC " +
-    "LIMIT " + limit +
-    " OFFSET " + offset;
+      'SELECT g.Name, ROUND(AVG(m.Popularity), 2), count(*) OVER() AS full_count ' +
+      'FROM Movies m, Genres g, Movie_Genres mg ' +
+      'WHERE EXTRACT(year FROM m.release_date) = ' +
+      year +
+      ' AND mg.id = m.id AND g.id = mg.genres ' +
+      'AND m.title IS NOT NULL ' +
+      'GROUP BY g.id, g.name ' +
+      'ORDER BY AVG(m.popularity) DESC ' +
+      'LIMIT ' +
+      limit +
+      ' OFFSET ' +
+      offset;
 
-    pool.query(
-      query,
-      (error, results) => {
-        if (error) throw error;
+    pool.query(query, (error, results) => {
+      if (error) throw error;
 
-        console.log(results.rows);
+      console.log(results.rows);
 
-        res.render('display_popular_genres', {
-          title: "Most Popular Genres in the Year " + year,
-          genres: results.rows,
-          year: year,
-          previousPage: (currentPage - 1),
-          nextPage: parseInt(currentPage) + 1,
-          booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
-        });
-      }
-    );
+      res.render('display_popular_genres', {
+        title: 'Most Popular Genres in the Year ' + year,
+        genres: results.rows,
+        year: year,
+        previousPage: currentPage - 1,
+        currentPage: currentPage,
+        nextPage: parseInt(currentPage) + 1,
+        booleanPreviousPage: isTherePrevPage(currentPage),
+        booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+      });
+    });
   },
 
   /** 4 TABLE QUERIES */
