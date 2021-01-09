@@ -1,0 +1,15 @@
+{{#if booleanPreviousPage}}
+    <form name="year" id="pages" method="post">
+        <input type="hidden" id={{input_value}} name={{input_value}} value={{collection}}>
+        <input type="hidden" id="page" name="page" value={{previousPage}}>
+        <button onclick="submit()">previous page</button>
+    </form>
+{{/if}}
+
+{{#if booleanNextPage}}
+    <form name="year" id="pages" method="post">
+        <input type="hidden" id={{input_value}} name={{input_value}} value={{collection}}>
+        <input type="hidden" id="page" name="page" value={{nextPage}}>
+        <button onclick="submit()">next page</button>
+    </form>
+{{/if}}
