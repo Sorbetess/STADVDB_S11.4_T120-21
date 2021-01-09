@@ -86,14 +86,14 @@ const controller = {
   getPopularGenres: function (req, res) {
     pool.query(
       yearQuery,
-      (error, genres) => {
+      (error, years) => {
         if (error) throw error;
 
         console.log(genres.rows);
 
         res.render('popular_genres', {
           title: 'Most Popular Genres By Year',
-          years: genres.rows
+          years: years.rows
         });
       }
     );
