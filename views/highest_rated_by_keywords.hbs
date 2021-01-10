@@ -2,8 +2,10 @@
   <h2>{{ title }}</h2>
   <br>
 
+  {{#unless isResults}}
   <p>You can try something like "magic", or "family".</p>
-
+  {{/unless}}
+  
   <div id="form">
 
     <form name="movie_keywords" id="movie_keywordsd" method="post">
