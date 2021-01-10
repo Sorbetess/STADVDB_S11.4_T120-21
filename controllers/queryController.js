@@ -33,21 +33,14 @@ const queryController = {
 
   postHighestGrossing: function (req, res) {
     var year = req.body.year;
-    var currentPage = req.body.page;
-
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
 
     var query =
-      'SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count ' +
+      'SELECT Title, Release_Date, Revenue - Budget AS Net_Income ' +
       'FROM Movies ' +
       'WHERE EXTRACT(year FROM Release_Date) = ' +
       year +
       ' ORDER BY Revenue - Budget DESC ' +
-      'LIMIT ' +
-      limit +
-      ' OFFSET ' +
-      offset;
+      'LIMIT 50';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
@@ -68,13 +61,7 @@ const queryController = {
           input_option: 'year',
           input_value: year,
 
-          previousPage: currentPage - 1,
-
-          currentPage: currentPage,
-          offset: offset//,
-          //nextPage: parseInt(currentPage) + 1,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: 0
         });
       });
     });
