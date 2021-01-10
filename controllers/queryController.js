@@ -184,8 +184,8 @@ const queryController = {
       'SELECT title, avg_rating, num_ratings ' +
       'FROM movies ' + 
       'WHERE EXTRACT(YEAR FROM release_date) = ' + year + ' AND avg_rating IS NOT NULL ' +
-      'GROUP BY id, title, avg_rating, num_ratings '
-      'ORDER BY avg_rating DESC '
+      'GROUP BY id, title, avg_rating, num_ratings ' +
+      'ORDER BY avg_rating DESC ' +
       'LIMIT 50';
 
     pool.query(yearQuery, (error, years) => {
@@ -313,14 +313,16 @@ const queryController = {
       'LIMIT 50';*/
     
       var query = 
-      'SELECT m.title, avg_rating, num_ratings ' +
+      'SELECT m.title, m.avg_rating, m.num_ratings ' +
       'FROM movies m ' +
       'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
       'JOIN Keywords k ON mk.keyword_id = k.id ' +
-      'WHERE k.name LIKE LOWER(%' + keyword + '%) ' +
-      'GROUP BY m.id, m.title ' +
+      'WHERE k.name LIKE LOWER(\'%' + keyword + '%\') ' +
+      'AND m.avg_rating IS NOT NULL ' +
+      'GROUP BY m.id, m.title, m.avg_rating, m.num_ratings ' +
       'ORDER BY avg_rating DESC ' +
-      'LIMIT 50';
+      'LIMIT 50 '
+
 
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
