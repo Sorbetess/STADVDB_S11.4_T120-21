@@ -21,10 +21,10 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
+  user: 'sorbetes',
+  host: 'stadvdb-movies.cydw0fnxpsyx.us-east-2.rds.amazonaws.com',
   database: 'movies',
-  password: 'p@ssword',
+  password: 'Unisexual-Grudging4-Willed-Unraveled',
   port: 5432
 });
 
