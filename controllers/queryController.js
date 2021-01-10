@@ -261,13 +261,9 @@ const queryController = {
 
   postPopularGenres: function (req, res) {
     var year = req.body.year;
-    var currentPage = req.body.page;
-
-    var limit = 10;
-    var offset = (currentPage - 1) * limit;
 
     var query =
-      'SELECT g.Name, ROUND(AVG(m.Popularity), 2), count(*) OVER() AS full_count ' +
+      'SELECT g.Name, ROUND(AVG(m.Popularity), 2) ' +
       'FROM Movies m, Genres g, Movie_Genres mg ' +
       'WHERE EXTRACT(year FROM m.release_date) = ' +
       year +
@@ -275,18 +271,13 @@ const queryController = {
       'AND m.title IS NOT NULL ' +
       'GROUP BY g.id, g.name ' +
       'ORDER BY AVG(m.popularity) DESC ' +
-      'LIMIT ' +
-      limit// +
-      //' OFFSET ' +
-      //offset;
+      'LIMIT 10';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
       pool.query(query, (error, results) => {
         if (error) throw error;
-
-        console.log(results.rows);
 
         res.render('popular_genres', {
           title: 'Most Popular Genres in the Year ' + year,
@@ -298,12 +289,7 @@ const queryController = {
           input_option: 'year',
           input_value: year,
 
-          //previousPage: currentPage - 1,
-          //nextPage: parseInt(currentPage) + 1,
-          //currentPage: currentPage,
-          offset: offset//,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: 0
         });
       });
     });
