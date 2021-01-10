@@ -299,12 +299,8 @@ const queryController = {
 
   postHighestRatedByKeywords: function (req, res) {
     var keyword = req.body.keyword;
-    var currentPage = req.body.page;
 
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
-
-    var query =
+    /**var query =
       'SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) FROM Movies m ' +
       'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
       'JOIN Keywords k ON mk.keyword_id = k.id ' +
@@ -314,15 +310,21 @@ const queryController = {
       "%'" +
       'GROUP BY m.id, m.title ' +
       'ORDER BY AVG(r.rating) DESC ' +
-      'LIMIT ' +
-      limit +
-      ' OFFSET ' +
-      offset;
+      'LIMIT 50';*/
+    
+      var query = 
+      'SELECT m.title, avg_rating, num_ratings ' +
+      'FROM movies m ' +
+      'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
+      'JOIN Keywords k ON mk.keyword_id = k.id ' +
+      'WHERE k.name LIKE LOWER(%' + keyword + '%) ' +
+      'GROUP BY m.id, m.title ' +
+      'ORDER BY avg_rating DESC ' +
+      'LIMIT 50';
 
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('highest_rated_by_keywords', {
           title: 'Top 50 Highest-Rated Movies by Keyword ' + keyword,
@@ -332,12 +334,7 @@ const queryController = {
           input_option: 'keyword',
           input_value: keyword,
 
-          previousPage: currentPage - 1,
-          currentPage: currentPage,
-          offset: offset//,
-          //nextPage: parseInt(currentPage) + 1,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: 0
         });
       } else {
         res.render('highest_rated_by_keywords', {
