@@ -214,13 +214,9 @@ const queryController = {
 
   postSimilarMovies: function (req, res) {
     var title = req.body.title;
-    var currentPage = req.body.page;
-
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
 
     var query =
-      "SELECT m.title, string_agg(DISTINCT k.name, ', ') AS keywords, count(*) OVER() AS full_count " +
+      "SELECT m.title, string_agg(DISTINCT k.name, ', ') AS keywords " +
       'FROM Movies m JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
       'JOIN Keywords k ON k.id = mk.keyword_id ' +
       'WHERE m.id != (	SELECT m.id ' +
@@ -237,19 +233,12 @@ const queryController = {
       "%') " +
       'GROUP BY m.id, m.title ' +
       'ORDER BY COUNT(DISTINCT mk.keyword_id) DESC ' +
-      'LIMIT ' +
-      limit +
-      'OFFSET ' +
-      offset;
-
-    console.log(query);
+      'LIMIT 50';
 
     pool.query(query, (error, results) => {
-      console.log(error);
 
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('similar_movies', {
           title: 'Top 50 Similar Movies to "' + title + '"',
@@ -259,11 +248,7 @@ const queryController = {
           input_option: 'title',
           input_value: title,
 
-          previousPage: currentPage - 1,
-          offset: offset //,
-          // nextPage: parseInt(currentPage) + 1,
-          // booleanPreviousPage: isTherePrevPage(currentPage),
-          // booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: 0
         });
       } else {
         res.render('similar_movies', {
