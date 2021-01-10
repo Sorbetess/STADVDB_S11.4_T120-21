@@ -33,8 +33,6 @@ const controller = {
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
-      console.log(years.rows);
-
       res.render('highest_grossing', {
         title: 'Top 10 Highest Grossing Movies By Year',
         years: years.rows
@@ -60,8 +58,6 @@ const controller = {
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
-      console.log(years.rows);
-
       res.render('highest_rated', {
         title: 'Highest Rated Movies By Year',
         years: years.rows
@@ -80,9 +76,6 @@ const controller = {
   getPopularGenres: function (req, res) {
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
-
-      console.log(years.rows);
-
       res.render('popular_genres', {
         title: 'Most Popular Genres By Year',
         years: years.rows
