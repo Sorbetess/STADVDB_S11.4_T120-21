@@ -30,7 +30,11 @@ app.engine(
           style: 'currency',
           currency: 'USD'
         });
-        return formatter.format(value);
+
+        if (value <= 0.0)
+          return 'N/A'
+        else
+          return formatter.format(value);
       }
     }
   })

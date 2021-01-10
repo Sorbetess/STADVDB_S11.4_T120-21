@@ -260,7 +260,7 @@ const queryController = {
       title +
       "%') " +
       'GROUP BY m.id, m.title ' +
-      'ORDER BY COUNT(mk.keyword_id) DESC ' +
+      'ORDER BY COUNT(DISTINCT mk.keyword_id) DESC ' +
       'LIMIT ' +
       limit +
       'OFFSET ' +
@@ -340,7 +340,7 @@ const queryController = {
           //previousPage: currentPage - 1,
           //nextPage: parseInt(currentPage) + 1,
           //currentPage: currentPage,
-          offset: offset,
+          offset: offset//,
           //booleanPreviousPage: isTherePrevPage(currentPage),
           //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
