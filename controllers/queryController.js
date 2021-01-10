@@ -48,8 +48,6 @@ const queryController = {
       pool.query(query, (error, results) => {
         if (error) throw error;
 
-        console.log(results.rows);
-
         res.render('highest_grossing', {
           title: 'Top 50 Highest Grossing Movies in ' + year,
 
@@ -90,7 +88,6 @@ const queryController = {
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('movie_info', {
           title: 'Movie Info of "' + title + '"',
@@ -139,12 +136,9 @@ const queryController = {
       ' OFFSET ' +
       offset;
 
-    console.log(query);
-
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('collection_earnings', {
           title: 'Total Movie Collection Earnings of "' + collection + '"',
@@ -172,12 +166,8 @@ const queryController = {
 
   postHighestRated: function (req, res) {
     var year = req.body.year;
-    var currentPage = req.body.page;
 
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
-
-    var query =
+    /**var query =
       'SELECT m.title, ROUND(AVG(r.rating), 2), COUNT(r.rating) ' +
       'FROM movies m ' +
       'JOIN ratings r ON m.id = r.movie_id ' +
@@ -188,18 +178,21 @@ const queryController = {
       'LIMIT ' +
       limit +
       ' OFFSET ' +
-      offset;
-
-    console.log(query);
+      offset;*/
+    
+    var query =
+      'SELECT title, avg_rating, num_ratings ' +
+      'FROM movies ' + 
+      'WHERE EXTRACT(YEAR FROM release_date) = ' + year + ' AND avg_rating IS NOT NULL ' +
+      'GROUP BY id, title, avg_rating, num_ratings '
+      'ORDER BY avg_rating DESC '
+      'LIMIT 50';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
-      console.log(years.rows);
-
       pool.query(query, (error, results) => {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('highest_rated', {
           title: 'Top 50 Highest Rated Movies in the Year ' + year,
@@ -211,12 +204,7 @@ const queryController = {
           input_option: 'year',
           input_value: year,
 
-          previousPage: currentPage - 1,
-          currentPage: currentPage,
-          offset: offset//,
-          //nextPage: parseInt(currentPage) + 1,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: 0
         });
       });
     });
