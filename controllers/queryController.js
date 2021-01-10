@@ -260,7 +260,7 @@ const queryController = {
       title +
       "%') " +
       'GROUP BY m.id, m.title ' +
-      'ORDER BY COUNT(mk.keyword_id) DESC ' +
+      'ORDER BY COUNT(DISTINCT mk.keyword_id) DESC ' +
       'LIMIT ' +
       limit +
       'OFFSET ' +
