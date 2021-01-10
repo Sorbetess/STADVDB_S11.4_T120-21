@@ -335,12 +335,12 @@ const queryController = {
           years: years.rows,
 
           input_option: 'year',
-          input_value: year//,
+          input_value: year,
 
           //previousPage: currentPage - 1,
           //nextPage: parseInt(currentPage) + 1,
           //currentPage: currentPage,
-          //offset: offset,
+          offset: offset,
           //booleanPreviousPage: isTherePrevPage(currentPage),
           //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
         });
