@@ -338,7 +338,6 @@ const queryController = {
           input_option: 'year',
           input_value: year,
 
-
           //previousPage: currentPage - 1,
           //nextPage: parseInt(currentPage) + 1,
           //currentPage: currentPage,
