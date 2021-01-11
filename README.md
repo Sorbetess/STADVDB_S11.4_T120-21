@@ -35,7 +35,7 @@ npm install
 Step 3. Run the application itself:
 
 ```
-node index.js
+npm start
 ```
 
 Once done, open the web application at [localhost:5000](http://localhost:5000/).
