@@ -21,7 +21,7 @@ Before running the web application, please install the following into your syste
 You may opt to download the repository or create a clone by running the following code on the command line:
 
 ```
-git clone https://github.com/ccapdev1920T2/s12g2.git
+git clone https://github.com/S0rbetes/STADVDB_S11.4_T120-21.git
 ```
 
 Open the command prompt to the folder where the project is.
