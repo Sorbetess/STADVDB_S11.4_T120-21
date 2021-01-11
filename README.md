@@ -42,7 +42,7 @@ Once done, open the web application at [localhost:5000](http://localhost:5000/).
 
 ## Queries
 
-Users may register a new account using a valid DLSU ID number and any email address.
+...
 
 ## Authors
 
