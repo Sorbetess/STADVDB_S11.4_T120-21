@@ -32,7 +32,7 @@ Step 1. Run the following code to install the Node.js modules needed:
 npm install
 ```
 
-Step 3. Run the application itself:
+Step 2. Run the application itself:
 
 ```
 npm start
