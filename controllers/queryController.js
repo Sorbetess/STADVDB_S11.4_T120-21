@@ -11,8 +11,8 @@ function isThereNextPage(queryCount, limit, currentPage) {
   var lastPage = queryCount / limit;
 
   // return false if the number of queries is less than 1 page, or if the current page is already the last page
-  return (queryCount <= limit || currentPage >= lastPage) ? false : true;
-  }
+  return queryCount <= limit || currentPage >= lastPage ? false : true;
+}
 
 const yearQuery =
   'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
@@ -21,10 +21,10 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: 'postgres',
+  user: '',
   host: 'localhost',
-  database: 'movies',
-  password: 'p@ssword',
+  database: '',
+  password: '',
   port: 5432
 });
 
@@ -71,10 +71,7 @@ const queryController = {
           previousPage: currentPage - 1,
 
           currentPage: currentPage,
-          offset: offset//,
-          //nextPage: parseInt(currentPage) + 1,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset
         });
       });
     });
@@ -82,6 +79,7 @@ const queryController = {
 
   postMovieInfo: function (req, res) {
     var title = req.body.title;
+
     var currentPage = req.body.page;
 
     var limit = 5;
@@ -91,7 +89,7 @@ const queryController = {
       "SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link,  count(*) OVER() AS full_count " +
       'FROM Movies ' +
       "WHERE LOWER(title) LIKE LOWER('%" +
-      title +
+      title.replace("'", "''") +
       "%') " +
       'ORDER BY popularity DESC ' +
       'LIMIT ' +
@@ -141,7 +139,7 @@ const queryController = {
       'SELECT c.Name, SUM(m.Revenue), count(*) OVER() AS full_count ' +
       'FROM Collections c, Movies m ' +
       "WHERE LOWER(c.Name) LIKE LOWER('%" +
-      collection +
+      collection.replace("'", "''") +
       "%') " +
       'AND c.id = m.Belongs_To_Collection ' +
       'GROUP BY c.id, c.Name ' +
@@ -225,10 +223,7 @@ const queryController = {
 
           previousPage: currentPage - 1,
           currentPage: currentPage,
-          offset: offset//,
-          //nextPage: parseInt(currentPage) + 1,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset
         });
       });
     });
@@ -250,14 +245,14 @@ const queryController = {
       'WHERE m.id != (	SELECT m.id ' +
       'FROM movies m ' +
       "WHERE LOWER(m.title) LIKE '%" +
-      title +
+      title.replace("'", "''") +
       "%' " +
       'LIMIT 1) ' +
       'AND	k.id IN ( 	SELECT DISTINCT mk.keyword_id ' +
       'FROM Movie_keywords mk ' +
       'JOIN Movies m ON mk.movie_id = m.id ' +
       "WHERE LOWER(m.title) LIKE '%" +
-      title +
+      title.replace("'", "''") +
       "%') " +
       'GROUP BY m.id, m.title ' +
       'ORDER BY COUNT(DISTINCT mk.keyword_id) DESC ' +
@@ -284,10 +279,7 @@ const queryController = {
           input_value: title,
 
           previousPage: currentPage - 1,
-          offset: offset //,
-          // nextPage: parseInt(currentPage) + 1,
-          // booleanPreviousPage: isTherePrevPage(currentPage),
-          // booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset
         });
       } else {
         res.render('similar_movies', {
@@ -315,9 +307,7 @@ const queryController = {
       'GROUP BY g.id, g.name ' +
       'ORDER BY AVG(m.popularity) DESC ' +
       'LIMIT ' +
-      limit// +
-      //' OFFSET ' +
-      //offset;
+      limit;
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
@@ -337,12 +327,7 @@ const queryController = {
           input_option: 'year',
           input_value: year,
 
-          //previousPage: currentPage - 1,
-          //nextPage: parseInt(currentPage) + 1,
-          //currentPage: currentPage,
-          offset: offset//,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset
         });
       });
     });
@@ -363,7 +348,7 @@ const queryController = {
       'JOIN Keywords k ON mk.keyword_id = k.id ' +
       'JOIN Ratings r ON r.movie_id = m.id ' +
       "WHERE k.name LIKE '%" +
-      keyword +
+      keyword.replace("'", "''") +
       "%'" +
       'GROUP BY m.id, m.title ' +
       'ORDER BY AVG(r.rating) DESC ' +
@@ -387,10 +372,7 @@ const queryController = {
 
           previousPage: currentPage - 1,
           currentPage: currentPage,
-          offset: offset//,
-          //nextPage: parseInt(currentPage) + 1,
-          //booleanPreviousPage: isTherePrevPage(currentPage),
-          //booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          offset: offset
         });
       } else {
         res.render('highest_rated_by_keywords', {
