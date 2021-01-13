@@ -40,10 +40,6 @@ npm start
 
 Once done, open the web application at [localhost:5000](http://localhost:5000/).
 
-## Queries
-
-...
-
 ## Authors
 
 * **Robi Banogon**
@@ -51,7 +47,3 @@ Once done, open the web application at [localhost:5000](http://localhost:5000/).
 * **Sharmaine Gaw**
 * **Thea Go**
 * **Lance Teng**
-
-## Acknowledgments
-
-* ...
