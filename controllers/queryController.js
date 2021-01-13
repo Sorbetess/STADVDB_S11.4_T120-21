@@ -21,11 +21,11 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: 'sorbetes',
-  host: 'stadvdb-movies.cydw0fnxpsyx.us-east-2.rds.amazonaws.com',
-  database: 'movies',
-  password: 'Unisexual-Grudging4-Willed-Unraveled',
-  port: 5432
+  user: process.env.RDS_USER,
+  host: process.env.RDS_URL,
+  database: process.env.RDS_DATABASE,
+  password: process.env.RDS_PASSWORD,
+  port: process.env.RDS_PORT
 });
 
 const queryController = {
