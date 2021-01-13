@@ -1,0 +1,177 @@
+Query to add avg_ratings and num_ratings to the Movies table:
+
+ALTER TABLE movies
+	ADD COLUMN avg_rating float,
+ADD COLUMN num_ratings numeric;
+	
+WITH average AS (
+	SELECT  ROUND(AVG(rating), 2) as average_rating, count(rating) as num_ratings, movie_id
+	FROM ratings
+	GROUP BY movie_id
+)
+
+UPDATE movies AS m
+SET  avg_rating = a.average_rating,
+num_ratings = a.num_ratings
+FROM average a
+WHERE a.movie_id = m.id
+
+
+1 TABLE
+
+1. Top 50 Highest Grossing Movies by Year
+
+SELECT title, release_date, revenue - budget AS net_income
+FROM Movies
+WHERE EXTRACT(year FROM release_date) = <input>
+ORDER BY revenue - budget DESC
+LIMIT 50
+
+2. Movie Information
+
+SELECT title, overview, release_date, runtime, tagline, ROUND(popularity, 2) as popularity, CONCAT('https://imdb.com/title/', imdb_id) AS imdb_link
+FROM Movies
+WHERE LOWER(title) LIKE LOWER('%<input>%')
+ORDER BY popularity DESC
+
+	
+2 TABLES
+
+1. Total Movie Collection Earnings
+
+Original Query:
+
+SELECT c.name, SUM(m.revenue)
+FROM Collections c, Movies m
+WHERE LOWER(c.name) LIKE LOWER('%<input>%') AND 
+ c.id = m.belongs_to_collection
+GROUP BY c.id, c.name
+ORDER BY c.name ASC
+LIMIT 10
+
+Optimized Query:
+
+SELECT c.name, SUM(m.revenue)
+FROM Collections c 
+JOIN Movies m ON c.id = m.belongs_to_collection
+WHERE LOWER(c.name) LIKE LOWER('%<input>%')
+GROUP BY c.id, c.name
+ORDER BY c.name ASC
+LIMIT 10
+
+2. Top 50 Highest-Rated Movies by Year
+
+Original Query:
+
+SELECT m.title, ROUND(AVG(r.rating), 2), COUNT(r.rating)
+FROM movies m, ratings r
+WHERE m.id = r.movie_id AND 
+      EXTRACT(year FROM release_date) = <input>
+GROUP BY m.id, m.title
+ORDER BY AVG(r.rating) DESC
+LIMIT 50
+
+Optimized Query:
+
+SELECT title, avg_rating, num_ratings
+FROM movies 
+WHERE EXTRACT(YEAR FROM release_date) = <input> AND avg_rating IS NOT NULL
+GROUP BY id, title, avg_rating, num_ratings
+ORDER BY avg_rating DESC
+LIMIT 50
+
+
+3 TABLES
+
+1. Top 50 Similar Movies
+
+Original Query:
+
+SELECT m.title, string_agg(k.name, ', ') AS keywords
+FROM Movies m, Movie_Keywords mk, Keywords k
+WHERE m.id = mk.movie_id AND
+     m.id != (SELECT m.id
+              FROM movies m
+              WHERE LOWER(m.title) LIKE '%input%'
+              LIMIT 1) AND
+     k.id = mk.keyword_id AND
+     k.id IN (    SELECT mk.keyword_id
+                FROM Movie_Keywords mk
+                WHERE mk.movie_id = (SELECT m.id
+                                FROM movies m
+                                WHERE LOWER(m.title) LIKE '%input%'
+                                LIMIT 1))
+GROUP BY m.id, m.title
+ORDER BY COUNT(mk.keyword_id) DESC
+LIMIT 50
+
+Optimized Query:
+
+SELECT m.title, string_agg(DISTINCT k.name, ', ') AS keywords
+FROM Movies m JOIN Movie_Keywords mk ON m.id = mk.movie_id
+JOIN Keywords k ON k.id = mk.keyword_id
+WHERE m.id != (	SELECT m.id
+              	FROM movies m
+              	WHERE LOWER(m.title) LIKE '%input%'
+              	LIMIT 1) 
+AND	k.id IN ( 	SELECT DISTINCT mk.keyword_id
+			FROM Movie_keywords mk
+			JOIN Movies m ON mk.movie_id = m.id
+			WHERE LOWER(m.title) LIKE '%input%')
+GROUP BY m.id, m.title
+ORDER BY COUNT(DISTINCT mk.keyword_id) DESC
+LIMIT 50
+
+2. Top 10 Most Popular Genres by Year
+
+Original Query:
+
+SELECT g.Name, ROUND(AVG(m.Popularity), 2)
+FROM Movies m, Genres g, Movie_Genres mg
+WHERE EXTRACT(year FROM m.release_date) = <input>
+	AND mg.movie_id = m.id
+AND g.id = mg.genre_id
+AND m.title IS NOT NULL
+GROUP BY g.id, g.name
+ORDER BY AVG(m.popularity) DESC
+LIMIT 10
+
+Optimized Query:
+
+SELECT g.Name, ROUND(AVG(m.Popularity), 2)
+FROM Movies m
+JOIN Movie_Genres mg ON mg.id = m.id
+JOIN Genres g ON g.movie_id = mg.genre_id
+WHERE EXTRACT(year FROM m.release_date) = <input>
+  AND m.title IS NOT NULL
+GROUP BY g.id, g.name
+ORDER BY AVG(m.popularity) DESC
+LIMIT 10
+
+
+4-6 TABLES
+
+1. Top 50 Highest-Rated Movies by Keywords
+
+Original Query:
+
+SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating)
+FROM Movies m, Movie_Keywords mk, Keywords k, Ratings r
+WHERE k.name LIKE '%input%' AND 
+      m.id = mk.movie_id AND
+      mk.keyword_id = k.id AND
+      r.movie_id = m.id
+GROUP BY m.id, m.title
+ORDER BY AVG(r.rating) DESC
+LIMIT 50
+
+Optimized Query:
+
+SELECT m.title, m.avg_rating, m.num_ratings
+FROM movies m 
+JOIN Movie_Keywords mk ON m.id = mk.movie_id
+JOIN Keywords k ON mk.keyword_id = k.id 
+WHERE k.name LIKE LOWER('%<input>%') AND m.avg_rating IS NOT NULL
+GROUP BY m.id, m.title, m.avg_rating, m.num_ratings
+	ORDER BY avg_rating DESC
+LIMIT 50

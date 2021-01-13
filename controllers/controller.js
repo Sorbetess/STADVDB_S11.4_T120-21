@@ -1,10 +1,10 @@
 const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  user: '',
-  host: 'localhost',
-  database: '',
-  password: '',
+  user: 'sorbetes',
+  host: 'stadvdb-movies.cydw0fnxpsyx.us-east-2.rds.amazonaws.com',
+  database: 'movies',
+  password: 'Unisexual-Grudging4-Willed-Unraveled',
   port: 5432
 });
 
@@ -33,8 +33,6 @@ const controller = {
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
-      console.log(years.rows);
-
       res.render('highest_grossing', {
         title: 'Top 10 Highest Grossing Movies By Year',
         years: years.rows
@@ -60,8 +58,6 @@ const controller = {
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
-      console.log(years.rows);
-
       res.render('highest_rated', {
         title: 'Highest Rated Movies By Year',
         years: years.rows
@@ -80,9 +76,6 @@ const controller = {
   getPopularGenres: function (req, res) {
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
-
-      console.log(years.rows);
-
       res.render('popular_genres', {
         title: 'Most Popular Genres By Year',
         years: years.rows

@@ -21,10 +21,10 @@ const yearQuery =
   'ORDER BY year DESC';
 
 const pool = new Pool({
-  user: '',
-  host: 'localhost',
-  database: '',
-  password: '',
+  user: 'sorbetes',
+  host: 'stadvdb-movies.cydw0fnxpsyx.us-east-2.rds.amazonaws.com',
+  database: 'movies',
+  password: 'Unisexual-Grudging4-Willed-Unraveled',
   port: 5432
 });
 
@@ -33,29 +33,20 @@ const queryController = {
 
   postHighestGrossing: function (req, res) {
     var year = req.body.year;
-    var currentPage = req.body.page;
-
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
 
     var query =
-      'SELECT Title, Release_Date, Revenue - Budget AS Net_Income, count(*) OVER() AS full_count ' +
+      'SELECT Title, Release_Date, Revenue - Budget AS Net_Income ' +
       'FROM Movies ' +
       'WHERE EXTRACT(year FROM Release_Date) = ' +
       year +
       ' ORDER BY Revenue - Budget DESC ' +
-      'LIMIT ' +
-      limit +
-      ' OFFSET ' +
-      offset;
+      'LIMIT 50';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
       pool.query(query, (error, results) => {
         if (error) throw error;
-
-        console.log(results.rows);
 
         res.render('highest_grossing', {
           title: 'Top 50 Highest Grossing Movies in ' + year,
@@ -67,11 +58,7 @@ const queryController = {
 
           input_option: 'year',
           input_value: year,
-
-          previousPage: currentPage - 1,
-
-          currentPage: currentPage,
-          offset: offset
+          offset: 0
         });
       });
     });
@@ -82,6 +69,7 @@ const queryController = {
 
     var currentPage = req.body.page;
 
+    
     var limit = 5;
     var offset = (currentPage - 1) * limit;
 
@@ -100,7 +88,6 @@ const queryController = {
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('movie_info', {
           title: 'Movie Info of "' + title + '"',
@@ -149,12 +136,9 @@ const queryController = {
       ' OFFSET ' +
       offset;
 
-    console.log(query);
-
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('collection_earnings', {
           title: 'Total Movie Collection Earnings of "' + collection + '"',
@@ -182,12 +166,8 @@ const queryController = {
 
   postHighestRated: function (req, res) {
     var year = req.body.year;
-    var currentPage = req.body.page;
 
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
-
-    var query =
+    /**var query =
       'SELECT m.title, ROUND(AVG(r.rating), 2), COUNT(r.rating) ' +
       'FROM movies m ' +
       'JOIN ratings r ON m.id = r.movie_id ' +
@@ -198,18 +178,21 @@ const queryController = {
       'LIMIT ' +
       limit +
       ' OFFSET ' +
-      offset;
-
-    console.log(query);
+      offset;*/
+    
+    var query =
+      'SELECT title, avg_rating, num_ratings ' +
+      'FROM movies ' + 
+      'WHERE EXTRACT(YEAR FROM release_date) = ' + year + ' AND avg_rating IS NOT NULL ' +
+      'GROUP BY id, title, avg_rating, num_ratings ' +
+      'ORDER BY avg_rating DESC ' +
+      'LIMIT 50';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
-      console.log(years.rows);
-
       pool.query(query, (error, results) => {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('highest_rated', {
           title: 'Top 50 Highest Rated Movies in the Year ' + year,
@@ -221,9 +204,7 @@ const queryController = {
           input_option: 'year',
           input_value: year,
 
-          previousPage: currentPage - 1,
-          currentPage: currentPage,
-          offset: offset
+          offset: 0
         });
       });
     });
@@ -233,13 +214,9 @@ const queryController = {
 
   postSimilarMovies: function (req, res) {
     var title = req.body.title;
-    var currentPage = req.body.page;
-
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
 
     var query =
-      "SELECT m.title, string_agg(DISTINCT k.name, ', ') AS keywords, count(*) OVER() AS full_count " +
+      "SELECT m.title, string_agg(DISTINCT k.name, ', ') AS keywords " +
       'FROM Movies m JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
       'JOIN Keywords k ON k.id = mk.keyword_id ' +
       'WHERE m.id != (	SELECT m.id ' +
@@ -256,19 +233,12 @@ const queryController = {
       "%') " +
       'GROUP BY m.id, m.title ' +
       'ORDER BY COUNT(DISTINCT mk.keyword_id) DESC ' +
-      'LIMIT ' +
-      limit +
-      'OFFSET ' +
-      offset;
-
-    console.log(query);
+      'LIMIT 50';
 
     pool.query(query, (error, results) => {
-      console.log(error);
 
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('similar_movies', {
           title: 'Top 50 Similar Movies to "' + title + '"',
@@ -278,8 +248,7 @@ const queryController = {
           input_option: 'title',
           input_value: title,
 
-          previousPage: currentPage - 1,
-          offset: offset
+          offset: 0
         });
       } else {
         res.render('similar_movies', {
@@ -292,13 +261,9 @@ const queryController = {
 
   postPopularGenres: function (req, res) {
     var year = req.body.year;
-    var currentPage = req.body.page;
-
-    var limit = 10;
-    var offset = (currentPage - 1) * limit;
 
     var query =
-      'SELECT g.Name, ROUND(AVG(m.Popularity), 2), count(*) OVER() AS full_count ' +
+      'SELECT g.Name, ROUND(AVG(m.Popularity), 2) ' +
       'FROM Movies m, Genres g, Movie_Genres mg ' +
       'WHERE EXTRACT(year FROM m.release_date) = ' +
       year +
@@ -306,16 +271,13 @@ const queryController = {
       'AND m.title IS NOT NULL ' +
       'GROUP BY g.id, g.name ' +
       'ORDER BY AVG(m.popularity) DESC ' +
-      'LIMIT ' +
-      limit;
+      'LIMIT 10';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
       pool.query(query, (error, results) => {
         if (error) throw error;
-
-        console.log(results.rows);
 
         res.render('popular_genres', {
           title: 'Most Popular Genres in the Year ' + year,
@@ -326,8 +288,7 @@ const queryController = {
 
           input_option: 'year',
           input_value: year,
-
-          offset: offset
+          offset: 0
         });
       });
     });
@@ -337,12 +298,8 @@ const queryController = {
 
   postHighestRatedByKeywords: function (req, res) {
     var keyword = req.body.keyword;
-    var currentPage = req.body.page;
 
-    var limit = 50;
-    var offset = (currentPage - 1) * limit;
-
-    var query =
+    /**var query =
       'SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating) FROM Movies m ' +
       'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
       'JOIN Keywords k ON mk.keyword_id = k.id ' +
@@ -352,15 +309,23 @@ const queryController = {
       "%'" +
       'GROUP BY m.id, m.title ' +
       'ORDER BY AVG(r.rating) DESC ' +
-      'LIMIT ' +
-      limit +
-      ' OFFSET ' +
-      offset;
+      'LIMIT 50';*/
+    
+      var query = 
+      'SELECT m.title, m.avg_rating, m.num_ratings ' +
+      'FROM movies m ' +
+      'JOIN Movie_Keywords mk ON m.id = mk.movie_id ' +
+      'JOIN Keywords k ON mk.keyword_id = k.id ' +
+      'WHERE k.name LIKE LOWER(\'%' + keyword + '%\') ' +
+      'AND m.avg_rating IS NOT NULL ' +
+      'GROUP BY m.id, m.title, m.avg_rating, m.num_ratings ' +
+      'ORDER BY avg_rating DESC ' +
+      'LIMIT 50 '
+
 
     pool.query(query, (error, results) => {
       if (results.rows.length > 0) {
         if (error) throw error;
-        console.log(results.rows);
 
         res.render('highest_rated_by_keywords', {
           title: 'Top 50 Highest-Rated Movies by Keyword ' + keyword,
@@ -369,10 +334,7 @@ const queryController = {
 
           input_option: 'keyword',
           input_value: keyword,
-
-          previousPage: currentPage - 1,
-          currentPage: currentPage,
-          offset: offset
+          offset: 0
         });
       } else {
         res.render('highest_rated_by_keywords', {
