@@ -11,8 +11,8 @@ function isThereNextPage(queryCount, limit, currentPage) {
   var lastPage = queryCount / limit;
 
   // return false if the number of queries is less than 1 page, or if the current page is already the last page
-  return (queryCount <= limit || currentPage >= lastPage) ? false : true;
-  }
+  return queryCount <= limit || currentPage >= lastPage ? false : true;
+}
 
 const yearQuery =
   'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
@@ -58,7 +58,6 @@ const queryController = {
 
           input_option: 'year',
           input_value: year,
-
           offset: 0
         });
       });
@@ -67,6 +66,7 @@ const queryController = {
 
   postMovieInfo: function (req, res) {
     var title = req.body.title;
+
     var currentPage = req.body.page;
 
     
@@ -126,7 +126,7 @@ const queryController = {
       'SELECT c.Name, SUM(m.Revenue), count(*) OVER() AS full_count ' +
       'FROM Collections c, Movies m ' +
       "WHERE LOWER(c.Name) LIKE LOWER('%" +
-      collection +
+      collection.replace("'", "''") +
       "%') " +
       'AND c.id = m.Belongs_To_Collection ' +
       'GROUP BY c.id, c.Name ' +
@@ -288,7 +288,6 @@ const queryController = {
 
           input_option: 'year',
           input_value: year,
-
           offset: 0
         });
       });
@@ -306,7 +305,7 @@ const queryController = {
       'JOIN Keywords k ON mk.keyword_id = k.id ' +
       'JOIN Ratings r ON r.movie_id = m.id ' +
       "WHERE k.name LIKE '%" +
-      keyword +
+      keyword.replace("'", "''") +
       "%'" +
       'GROUP BY m.id, m.title ' +
       'ORDER BY AVG(r.rating) DESC ' +
@@ -335,7 +334,6 @@ const queryController = {
 
           input_option: 'keyword',
           input_value: keyword,
-
           offset: 0
         });
       } else {
