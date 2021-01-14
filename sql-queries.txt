@@ -92,14 +92,14 @@ FROM Movies m, Movie_Keywords mk, Keywords k
 WHERE m.id = mk.movie_id AND
      m.id != (SELECT m.id
               FROM movies m
-              WHERE LOWER(m.title) LIKE '%input%'
+              WHERE LOWER(m.title) LIKE LOWER('%<input>%')
               LIMIT 1) AND
      k.id = mk.keyword_id AND
      k.id IN (    SELECT mk.keyword_id
                 FROM Movie_Keywords mk
                 WHERE mk.movie_id = (SELECT m.id
                                 FROM movies m
-                                WHERE LOWER(m.title) LIKE '%input%'
+                                WHERE LOWER(m.title) LIKE LOWER('%<input>%')
                                 LIMIT 1))
 GROUP BY m.id, m.title
 ORDER BY COUNT(mk.keyword_id) DESC
@@ -112,12 +112,12 @@ FROM Movies m JOIN Movie_Keywords mk ON m.id = mk.movie_id
 JOIN Keywords k ON k.id = mk.keyword_id
 WHERE m.id != (	SELECT m.id
               	FROM movies m
-              	WHERE LOWER(m.title) LIKE '%input%'
+              	WHERE LOWER(m.title) LIKE LOWER('%<input>%')
               	LIMIT 1) 
 AND	k.id IN ( 	SELECT DISTINCT mk.keyword_id
 			FROM Movie_keywords mk
 			JOIN Movies m ON mk.movie_id = m.id
-			WHERE LOWER(m.title) LIKE '%input%')
+			WHERE LOWER(m.title) LIKE LOWER('%<input>%'))
 GROUP BY m.id, m.title
 ORDER BY COUNT(DISTINCT mk.keyword_id) DESC
 LIMIT 50
@@ -157,7 +157,7 @@ Original Query:
 
 SELECT m.Title, ROUND(AVG(r.rating),2), COUNT(r.rating)
 FROM Movies m, Movie_Keywords mk, Keywords k, Ratings r
-WHERE k.name LIKE '%input%' AND 
+WHERE k.name LIKE LOWER('%<input>%') AND 
       m.id = mk.movie_id AND
       mk.keyword_id = k.id AND
       r.movie_id = m.id
