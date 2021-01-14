@@ -222,16 +222,16 @@ const queryController = {
       'JOIN Keywords k ON k.id = mk.keyword_id ' +
       'WHERE m.id != (	SELECT m.id ' +
       'FROM movies m ' +
-      "WHERE LOWER(m.title) LIKE '%" +
+      "WHERE LOWER(m.title) LIKE LOWER('%" +
       title.replace("'", "''") +
-      "%' " +
+      "%') " +
       'LIMIT 1) ' +
       'AND	k.id IN ( 	SELECT DISTINCT mk.keyword_id ' +
       'FROM Movie_keywords mk ' +
       'JOIN Movies m ON mk.movie_id = m.id ' +
-      "WHERE LOWER(m.title) LIKE '%" +
+      "WHERE LOWER(m.title) LIKE LOWER('%" +
       title.replace("'", "''") +
-      "%') " +
+      "%')) " +
       'GROUP BY m.id, m.title ' +
       'ORDER BY COUNT(DISTINCT mk.keyword_id) DESC ' +
       'LIMIT 50';
