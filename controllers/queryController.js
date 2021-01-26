@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool;
+require('dotenv').config();
 
 /** This function returns whether or not there is a previous page. */
 function isTherePrevPage(currentPage) {
@@ -101,7 +102,11 @@ const queryController = {
           offset: offset,
           nextPage: parseInt(currentPage) + 1,
           booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          booleanNextPage: isThereNextPage(
+            results.rows[0].full_count,
+            limit,
+            currentPage
+          )
         });
       } else {
         res.render('movie_info', {
@@ -152,7 +157,11 @@ const queryController = {
           offset: offset,
           nextPage: parseInt(currentPage) + 1,
           booleanPreviousPage: isTherePrevPage(currentPage),
-          booleanNextPage: isThereNextPage(results.rows[0].full_count, limit, currentPage)
+          booleanNextPage: isThereNextPage(
+            results.rows[0].full_count,
+            limit,
+            currentPage
+          )
         });
       } else {
         res.render('collection_earnings', {
