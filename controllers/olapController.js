@@ -44,7 +44,14 @@ const olapController = {
   postSlice: function (req, res) {
     var year = req.body.year;
 
-    var query = '';
+    var query = 'SELECT rd.year, rd.quarter, pd.name AS Company, SUM(r.revenue) AS Total_Revenue' +
+    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m' +
+    'WHERE r.release_id = rd.release_id AND' +
+    'r.company_id = pd.company_id AND' +
+    'r.movie_id = m.movie_id AND' +
+    'rd.year =' + year +
+    'GROUP BY pd.company_id, pd.name, rd.year, rd.quarter' +
+    'ORDER BY pd.company_id, rd.year, rd.quarter, Total_Revenue desc';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
@@ -69,8 +76,17 @@ const olapController = {
 
   postDice: function (req, res) {
     var year = req.body.year;
+    var company = req.body.company;
 
-    var query = '';
+    var query = 'SELECT rd.year, pd.name AS Company, ROUND(SUM(r.revenue), 2) AS Total_Revenue' +
+    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m' +
+    'WHERE r.release_id = rd.release_id AND' +
+    'r.company_id = pd.company_id AND' +
+    'r.movie_id = m.movie_id AND' +
+    'rd.year =' + year + ' AND' +
+    'LOWER(pd.name) LIKE LOWER(\'%' + company + '%\')' +
+    'GROUP BY rd.year, pd.company_id' +
+    'ORDER BY SUM(r.revenue) desc';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
