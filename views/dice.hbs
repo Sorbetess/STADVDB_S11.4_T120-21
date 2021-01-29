@@ -1,0 +1,61 @@
+<div class="container">
+  <h2>{{ title }}</h2>
+  <br>
+
+  <div id="form">
+
+    <form name="year" id="year" method="post">
+
+      <label for="year">Year:</label>
+
+      <select id="year" name="year">
+
+        {{#each years}}
+        <option value={{year}}>{{year}}</option>
+        {{/each}}
+
+      </select>
+      <input type="hidden" name="page" value='1'>
+
+      <button onclick="submit()">Search</button>
+    </form>
+
+  </div>
+
+  <br>
+
+  {{#if isResults}}
+  <p> If a result is "N/A", it means the information is unavailable. </p>
+    <div class="row">
+      <div class="title col-1">
+      </div>
+      <div class="title col-6">
+        <p>Movie</p>
+      </div>
+      <div class="title col-5">
+        <p>Income</p>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#each movies}}
+  <div class="row">
+    <div class="title center col-1">
+      <p>{{page @index ../offset}}</p>
+    </div>
+    <div class="col-6">
+      <div class="title">{{title}}</div>
+      <div class="timestamp">
+        <p>{{todate release_date}}</p>
+      </div>
+    </div>
+    <div class="col-5">
+      <p>{{tomoney net_income}}</p>
+    </div>
+  </div>
+  <hr>
+  {{/each}}
+
+  <div id={{offset}}></div>
+
+</div>

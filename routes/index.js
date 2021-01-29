@@ -2,6 +2,7 @@ const router = require('express').Router();
 const controller = require('../controllers/controller.js');
 const queryController = require('../controllers/queryController.js');
 const bodyparser = require('body-parser');
+const olapController = require('../controllers/olapController.js');
 
 router.use(bodyparser.urlencoded({ extended: false }));
 
@@ -63,6 +64,38 @@ router.get('/top-50-highest-rated-movies-by-keywords', (req, res) => {
 
 router.post('/top-50-highest-rated-movies-by-keywords', (req, res) => {
   queryController.postHighestRatedByKeywords(req, res);
+});
+
+router.get('/slice', (req, res) => {
+  olapController.getSlice(req, res);
+});
+
+router.post('/slice', (req, res) => {
+  olapController.postSlice(req, res);
+});
+
+router.get('/dice', (req, res) => {
+  olapController.getDice(req, res);
+});
+
+router.post('/dice', (req, res) => {
+  olapController.postDice(req, res);
+});
+
+router.get('/drilldown', (req, res) => {
+  olapController.getDrillDown(req, res);
+});
+
+router.post('/drilldown', (req, res) => {
+  olapController.postDrillDown(req, res);
+});
+
+router.get('/rollup', (req, res) => {
+  olapController.getRollUp(req, res);
+});
+
+router.post('/rollup', (req, res) => {
+  olapController.postRollUp(req, res);
 });
 
 module.exports = router;
