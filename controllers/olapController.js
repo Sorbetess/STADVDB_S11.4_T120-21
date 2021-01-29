@@ -1,5 +1,5 @@
 const Pool = require('pg').Pool;
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 /** This function returns whether or not there is a previous page. */
 function isTherePrevPage(currentPage) {
