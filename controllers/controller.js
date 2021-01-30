@@ -90,7 +90,46 @@ const controller = {
     res.render('highest_rated_by_keywords', {
       title: 'Top 50 Highest-Rated Movies by Keywords'
     });
+  },
+
+
+
+  
+
+  /** OLAP PAGES */
+
+  getSlice: function (req, res) {
+    
+    res.render('slice', {
+      title: 'Slice'
+    });
+
+  },
+
+  getDice: function (req, res) {
+    
+    res.render('dice', {
+      title: 'Dice'
+    });
+    
+  },
+
+  getDrillDown: function (req, res) {
+    
+    res.render('drilldown', {
+      title: 'Drill-Down'
+    });
+    
+  },
+
+  getRollUp: function (req, res) {
+    
+    res.render('rollup', {
+      title: 'Roll Up'
+    });
+    
   }
+
 };
 
 module.exports = controller;

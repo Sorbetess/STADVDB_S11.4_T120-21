@@ -7,7 +7,6 @@
     <form name="year" id="year" method="post">
 
       <label for="year">Year:</label>
-
       <select id="year" name="year">
 
         {{#each years}}
@@ -15,6 +14,16 @@
         {{/each}}
 
       </select>
+
+      <label for="company">Company:</label>
+      <select id="company" name="company">
+
+        {{#each companies}}
+        <option value={{company}}>{{company}}</option>
+        {{/each}}
+
+      </select>
+
       <input type="hidden" name="page" value='1'>
 
       <button onclick="submit()">Search</button>
