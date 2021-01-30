@@ -31,26 +31,17 @@ const pool = new Pool({
 });
 
 const olapController = {
-  /** 1 TABLE QUERIES */
-
-  getSlice: function (req, res) {
-    
-    res.render('slice', {
-      title: 'Slice'
-    });
-
-  },
 
   postSlice: function (req, res) {
     var year = req.body.year;
 
-    var query = 'SELECT rd.year, rd.quarter, pd.name AS Company, SUM(r.revenue) AS Total_Revenue' +
-    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m' +
-    'WHERE r.release_id = rd.release_id AND' +
-    'r.company_id = pd.company_id AND' +
-    'r.movie_id = m.movie_id AND' +
-    'rd.year =' + year +
-    'GROUP BY pd.company_id, pd.name, rd.year, rd.quarter' +
+    var query = 'SELECT rd.year, rd.quarter, pd.name AS Company, SUM(r.revenue) AS Total_Revenue ' +
+    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m ' +
+    'WHERE r.release_id = rd.release_id AND ' +
+    'r.company_id = pd.company_id AND ' +
+    'r.movie_id = m.movie_id AND ' +
+    'rd.year = ' + year + ' ' +
+    'GROUP BY pd.company_id, pd.name, rd.year, rd.quarter ' +
     'ORDER BY pd.company_id, rd.year, rd.quarter, Total_Revenue desc';
 
     pool.query(yearQuery, (error, years) => {
@@ -66,47 +57,38 @@ const olapController = {
     });
   },
 
-  getDice: function (req, res) {
-    
-    res.render('dice', {
-      title: 'Dice'
-    });
-    
-  },
-
   postDice: function (req, res) {
     var year = req.body.year;
     var company = req.body.company;
 
-    var query = 'SELECT rd.year, pd.name AS Company, ROUND(SUM(r.revenue), 2) AS Total_Revenue' +
-    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m' +
-    'WHERE r.release_id = rd.release_id AND' +
-    'r.company_id = pd.company_id AND' +
-    'r.movie_id = m.movie_id AND' +
-    'rd.year =' + year + ' AND' +
-    'LOWER(pd.name) LIKE LOWER(\'%' + company + '%\')' +
-    'GROUP BY rd.year, pd.company_id' +
+    var companyQuery = 'SELECT pd.name AS Company FROM Production_Company ORDER BY Company DESC';
+
+    var query = 'SELECT rd.year, pd.name AS Company, ROUND(SUM(r.revenue), 2) AS Total_Revenue ' +
+    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m ' +
+    'WHERE r.release_id = rd.release_id AND ' +
+    'r.company_id = pd.company_id AND ' +
+    'r.movie_id = m.movie_id AND ' +
+    'rd.year =' + year + ' AND ' +
+    'LOWER(pd.name) LIKE LOWER(\'%' + company + '%\') ' +
+    'GROUP BY rd.year, pd.company_id ' +
     'ORDER BY SUM(r.revenue) desc';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
-      pool.query(query, (error, results) => {
+      pool.query(companyQuery, (error, companies) => {
         if (error) throw error;
 
-        res.render('dice', {
-          title: 'Dice'
+        pool.query(query, (error, results) => {
+          if (error) throw error;
+  
+          res.render('dice', {
+            title: 'Dice'
+          });
         });
-      });
-    });
-  },
 
-  getDrillDown: function (req, res) {
-    
-    res.render('drilldown', {
-      title: 'Drill-Down'
+      }
     });
-    
   },
 
   postDrillDown: function (req, res) {
@@ -125,14 +107,6 @@ const olapController = {
         });
       });
     });
-  },
-
-  getRollUp: function (req, res) {
-    
-    res.render('rollup', {
-      title: 'Roll Up'
-    });
-    
   },
 
   postRollUp: function (req, res) {
