@@ -117,15 +117,22 @@ const controller = {
   getDrillDown: function (req, res) {
     
     res.render('drilldown', {
-      title: 'Drill-Down'
+      title: 'Drill-Down',
+
+      isResults: true,
+      results: results.rows,
+      offset: 0
     });
     
   },
 
   getRollUp: function (req, res) {
-    
     res.render('rollup', {
-      title: 'Roll Up'
+      title: 'Roll Up',
+
+      isResults: true,
+      results: results.rows,
+      offset: 0
     });
     
   }
