@@ -16,13 +16,16 @@
       </select>
 
       <label for="company">Company:</label>
-      <select id="company" name="company">
+     <!-- <select id="company" name="company">
 
         {{#each companies}}
         <option value={{company}}>{{company}}</option>
         {{/each}}
 
-      </select>
+      </select>-->
+      <input type="text" id="company" name="company" onkeydown="pressedEnter(event)">
+      <input type="hidden" name="page" value='1'>
+
 
       <input type="hidden" name="page" value='1'>
 
