@@ -67,7 +67,7 @@ router.post('/top-50-highest-rated-movies-by-keywords', (req, res) => {
 });
 
 router.get('/slice', (req, res) => {
-  olapController.getSlice(req, res);
+  controller.getSlice(req, res);
 });
 
 router.post('/slice', (req, res) => {
@@ -75,7 +75,7 @@ router.post('/slice', (req, res) => {
 });
 
 router.get('/dice', (req, res) => {
-  olapController.getDice(req, res);
+  controller.getDice(req, res);
 });
 
 router.post('/dice', (req, res) => {
@@ -83,7 +83,7 @@ router.post('/dice', (req, res) => {
 });
 
 router.get('/drilldown', (req, res) => {
-  olapController.getDrillDown(req, res);
+  controller.getDrillDown(req, res);
 });
 
 router.post('/drilldown', (req, res) => {
@@ -91,7 +91,7 @@ router.post('/drilldown', (req, res) => {
 });
 
 router.get('/rollup', (req, res) => {
-  olapController.getRollUp(req, res);
+  controller.getRollUp(req, res);
 });
 
 router.post('/rollup', (req, res) => {

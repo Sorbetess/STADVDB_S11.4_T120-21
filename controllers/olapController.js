@@ -15,11 +15,16 @@ function isThereNextPage(queryCount, limit, currentPage) {
   return queryCount <= limit || currentPage >= lastPage ? false : true;
 }
 
+/*const yearQuery =
+  'SELECT DISTINCT year ' +
+  'FROM Release_Date ' +
+  'ORDER BY year DESC';*/
+
 const yearQuery =
-  'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
-  'FROM Movies ' +
-  'WHERE release_date IS NOT NULL ' +
-  'ORDER BY year DESC';
+'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
+'FROM Movies ' +
+'WHERE release_date IS NOT NULL ' +
+'ORDER BY year DESC';
 
 //UPDATE
 const pool = new Pool({
@@ -102,7 +107,7 @@ const olapController = {
           });
         });
 
-      }
+      })
     });
   },
 
