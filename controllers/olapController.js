@@ -51,7 +51,14 @@ const olapController = {
         if (error) throw error;
 
         res.render('slice', {
-          title: 'Slice'
+          title: 'Slice',
+
+          // options for years
+          years: years.rows,
+
+          isResults: true,
+          results: results.rows,
+          offset: 0
         });
       });
     });
@@ -61,7 +68,7 @@ const olapController = {
     var year = req.body.year;
     var company = req.body.company;
 
-    var companyQuery = 'SELECT pd.name AS Company FROM Production_Company ORDER BY Company DESC';
+    var companyQuery = 'SELECT pd.name AS company FROM Production_Company ORDER BY Company DESC';
 
     var query = 'SELECT rd.year, pd.name AS Company, ROUND(SUM(r.revenue), 2) AS Total_Revenue ' +
     'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m ' +
@@ -83,7 +90,15 @@ const olapController = {
           if (error) throw error;
   
           res.render('dice', {
-            title: 'Dice'
+            title: 'Dice',
+
+            // options for years and rows
+            years: years.rows,
+            companies: comapnies.rows,
+
+            isResults: true,
+            results: results.rows,
+            offset: 0
           });
         });
 
@@ -91,40 +106,38 @@ const olapController = {
     });
   },
 
-  postDrillDown: function (req, res) {
-    var year = req.body.year;
+  // no need for post since no user input naman?
 
+  /** postDrillDown: function (req, res) {
     var query = '';
 
-    pool.query(yearQuery, (error, years) => {
+    pool.query(query, (error, results) => {
       if (error) throw error;
 
-      pool.query(query, (error, results) => {
-        if (error) throw error;
+      res.render('drilldown', {
+        title: 'Drill-Down',
 
-        res.render('drilldown', {
-          title: 'Drill-Down'
-        });
+        isResults: true,
+        results: results.rows,
+        offset: 0
       });
-    });
   },
 
   postRollUp: function (req, res) {
-
     var query = '';
 
-    pool.query(yearQuery, (error, years) => {
+    pool.query(query, (error, results) => {
       if (error) throw error;
 
-      pool.query(query, (error, results) => {
-        if (error) throw error;
+      res.render('rollup', {
+        title: 'Roll Up',
 
-        res.render('rollup', {
-          title: 'Roll Up'
-        });
+        isResults: true,
+        results: results.rows,
+        offset: 0
       });
     });
-  }
+  } */ 
   
 };
 
