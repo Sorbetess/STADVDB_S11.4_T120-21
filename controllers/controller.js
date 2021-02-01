@@ -99,44 +99,111 @@ const controller = {
   /** OLAP PAGES */
 
   getSlice: function (req, res) {
-    
-    res.render('slice', {
-      title: 'Slice'
-    });
+    pool.query(yearQuery, (error, years) => {
+      if (error) throw error;
 
+      res.render('slice', {
+        title: 'Slice - Total Revenue of Production Companies in a Specific Year',
+        years: years.rows
+      });
+    });
   },
 
   getDice: function (req, res) {
-    
-    res.render('dice', {
-      title: 'Dice'
+    pool.query(yearQuery, (error, years) => {
+      if (error) throw error;
+
+      res.render('dice', {
+        title: 'Dice - Revenue of a Production Company in a Specific Year',
+        years: years.rows
+      });
     });
-    
   },
 
-  getDrillDown: function (req, res) {
-    
-    res.render('drilldown', {
-      title: 'Drill-Down',
 
-      isResults: true,
-      results: results.rows,
-      offset: 0
+
+  getDrillDown_a: function (req, res) {
+    var query = 
+    'SELECT rd.month, pd.name AS Company, m.title as Movie, ROUND(AVG(r.revenue), 2) AS Avg_Revenue ' +
+    'FROM (SELECT revenue, release_id, company_id, movie_id ' +
+    'FROM Revenue GROUP BY revenue, release_id, company_id, movie_id) r ' +
+    'JOIN Release_Date rd ON r.release_id = rd.release_id ' +
+    'JOIN Production_Company pd ON r.company_id = pd.company_id ' +
+    'JOIN Movie m ON r.movie_id = m.movie_id ' +
+    'GROUP BY ROLLUP(rd.month, pd.name, m.title) ' +
+    'ORDER BY rd.month, (CASE WHEN pd.name IS NULL THEN 1 ELSE 0 END), pd.name, (CASE WHEN m.title IS NULL THEN 1 ELSE 0 END), Avg_Revenue desc';
+
+    pool.query(query, (error, results) => {
+      if (error) throw error;
+      res.render('drilldown_a', {
+        title: 'Drill-Down - Average Monthly Revenue of Production Companies',
+  
+        isResults: true,
+        results: results.rows,
+        offset: 0
+      });
     });
-    
   },
 
-  getRollUp: function (req, res) {
-    res.render('rollup', {
-      title: 'Roll Up',
+  getDrillDown_b: function (req, res) {
+    var query = 
+    'SELECT rd.month, g.name AS Genre, ROUND(AVG(r.revenue), 2) AS Avg_Revenue ' +
+    'FROM Revenue r ' +
+    'JOIN Release_Date rd ON r.release_id = rd.release_id ' +
+    'JOIN Genre g ON r.genre_id = g.genre_id ' +
+    'GROUP BY ROLLUP(rd.month, g.name) ' +
+    'ORDER BY rd.month, (CASE WHEN g.name IS NULL THEN 1 ELSE 0 END), Avg_Revenue DESC, g.name';
 
-      isResults: true,
-      results: results.rows,
-      offset: 0
+    pool.query(query, (error, results) => {
+      if (error) throw error;
+      res.render('drilldown_b', {
+        title: 'Drill-Down - Average Monthly Revenue of Genres',
+  
+        isResults: true,
+        results: results.rows,
+        offset: 0
+      });
     });
-    
+  },
+
+
+
+  getRollUp_a: function (req, res) {
+    var query = 
+    '';
+
+    pool.query(query, (error, results) => {
+      if (error) throw error;
+      res.render('rollup_a', {
+        title: 'Roll Up - Average Quarterly Revenue of Production Companies',
+  
+        isResults: true,
+        results: results.rows,
+        offset: 0
+      });
+    });       
+  },
+
+  getRollUp_b: function (req, res) {
+    var query =
+    'SELECT rd.quarter, g.name, ROUND(AVG(r.revenue),2) AS avg_revenue ' +
+    'FROM Revenue r ' +
+    'JOIN Release_Date rd ON r.release_id = rd.release_id ' +
+    'JOIN Genre g ON r.genre_id = g.genre_id ' +
+    'GROUP BY ROLLUP(rd.quarter, g.name) ' +
+    'ORDER BY rd.quarter, (CASE WHEN g.name IS NULL THEN 1 ELSE 0 END), Avg_Revenue DESC, g.name';
+
+    pool.query(query, (error, results) => {
+      if (error) throw error;
+      res.render('rollup_b', {
+        title: 'Roll Up - Average Quarterly Revenue of Genres',
+  
+        isResults: true,
+        results: results.rows,
+        offset: 0
+      });
+    });    
   }
-
 };
 
 module.exports = controller;
