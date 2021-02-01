@@ -40,14 +40,17 @@ const olapController = {
   postSlice: function (req, res) {
     var year = req.body.year;
 
-    var query = 'SELECT rd.year, rd.quarter, pd.name AS Company, SUM(r.revenue) AS Total_Revenue ' +
-    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m ' +
-    'WHERE r.release_id = rd.release_id AND ' +
-    'r.company_id = pd.company_id AND ' +
-    'r.movie_id = m.movie_id AND ' +
-    'rd.year = ' + year + ' ' +
-    'GROUP BY pd.company_id, pd.name, rd.year, rd.quarter ' +
-    'ORDER BY pd.company_id, rd.year, rd.quarter, Total_Revenue desc';
+    var query =
+    'SELECT rd.quarter, pd.name AS Company, SUM(r.revenue) AS Total_Revenue '
+    'FROM (SELECT revenue, release_id, company_id, collection_id, movie_id ' +
+    'FROM Revenue ' +
+    'GROUP BY revenue, release_id, company_id, collection_id, movie_id) r ' +
+    'JOIN Release_Date rd ON r.release_id = rd.release_id ' +
+    'JOIN Production_Company pd ON r.company_id = pd.company_id ' +
+    'WHERE rd.year = ' + year + ' ' +
+    'GROUP BY rd.quarter, pd.name ' + 
+    'ORDER BY rd.quarter, Total_Revenue DESC';
+    
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
@@ -60,6 +63,7 @@ const olapController = {
 
           // options for years
           years: years.rows,
+          results: results.rows,
 
           isResults: true,
           results: results.rows,
@@ -73,41 +77,48 @@ const olapController = {
     var year = req.body.year;
     var company = req.body.company;
 
-    var companyQuery = 'SELECT pd.name AS company FROM Production_Company ORDER BY Company DESC';
+    // var query = 'SELECT rd.year, pd.name AS Company, ROUND(SUM(r.revenue), 2) AS Total_Revenue ' +
+    // 'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m ' +
+    // 'WHERE r.release_id = rd.release_id AND ' +
+    // 'r.company_id = pd.company_id AND ' +
+    // 'r.movie_id = m.movie_id AND ' +
+    // 'rd.year =' + year + ' AND ' +
+    // 'LOWER(pd.name) LIKE LOWER(\'%' + company + '%\') ' +
+    // 'GROUP BY rd.year, pd.company_id ' +
+    // 'ORDER BY SUM(r.revenue) desc';
 
-    var query = 'SELECT rd.year, pd.name AS Company, ROUND(SUM(r.revenue), 2) AS Total_Revenue ' +
-    'FROM Revenue r, Release_Date rd, Production_Company pd, Movie m ' +
-    'WHERE r.release_id = rd.release_id AND ' +
-    'r.company_id = pd.company_id AND ' +
-    'r.movie_id = m.movie_id AND ' +
-    'rd.year =' + year + ' AND ' +
+    var query =
+    "SELECT pd.name AS Company, (CASE WHEN c.name IS NULL THEN 'Movies Without a Collection' ELSE c.name END) AS Collection, ROUND(SUM(r.revenue), 2) AS Total_Revenue " +
+    'FROM (SELECT revenue, release_id, company_id, collection_id, movie_id ' +
+    'FROM Revenue ' +
+    'GROUP BY revenue, release_id, company_id, collection_id, movie_id) r ' +
+    'FULL JOIN Release_Date rd ON r.release_id = rd.release_id ' +
+    'FULL JOIN Production_Company pd ON r.company_id = pd.company_id ' +
+    'FULL JOIN Movie m ON r.movie_id = m.movie_id ' +
+    'FULL JOIN Collection c ON r.collection_id = c.collection_id ' +
+    'WHERE rd.year = ' + year + 'AND ' + 
     'LOWER(pd.name) LIKE LOWER(\'%' + company + '%\') ' +
-    'GROUP BY rd.year, pd.company_id ' +
-    'ORDER BY SUM(r.revenue) desc';
+    'GROUP BY pd.company_id, c.collection_id ' +
+    'ORDER BY pd.name, SUM(r.revenue) DESC';
 
     pool.query(yearQuery, (error, years) => {
       if (error) throw error;
-
-      pool.query(companyQuery, (error, companies) => {
+      pool.query(query, (error, results) => {
         if (error) throw error;
 
-        pool.query(query, (error, results) => {
-          if (error) throw error;
-  
-          res.render('dice', {
-            title: 'Dice',
+        res.render('dice', {
+          title: 'Dice',
 
-            // options for years and rows
-            years: years.rows,
-            companies: comapnies.rows,
+          // options for years
+          years: years.rows,
 
-            isResults: true,
-            results: results.rows,
-            offset: 0
-          });
+          results: results.rows,
+
+          isResults: true,
+          results: results.rows,
+          offset: 0
         });
-
-      })
+      });
     });
   },
 
