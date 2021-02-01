@@ -99,19 +99,25 @@ const controller = {
   /** OLAP PAGES */
 
   getSlice: function (req, res) {
-    
-    res.render('slice', {
-      title: 'Slice'
-    });
+    pool.query(yearQuery, (error, years) => {
+      if (error) throw error;
 
+      res.render('slice', {
+        title: 'Slice',
+        years: years.rows
+      });
+    });
   },
 
   getDice: function (req, res) {
-    
-    res.render('dice', {
-      title: 'Dice'
+    pool.query(yearQuery, (error, years) => {
+      if (error) throw error;
+
+      res.render('dice', {
+        title: 'Dice',
+        years: years.rows
+      });
     });
-    
   },
 
   getDrillDown: function (req, res) {
@@ -123,7 +129,6 @@ const controller = {
       results: results.rows,
       offset: 0
     });
-    
   },
 
   getRollUp: function (req, res) {
@@ -134,9 +139,7 @@ const controller = {
       results: results.rows,
       offset: 0
     });
-    
   }
-
 };
 
 module.exports = controller;
