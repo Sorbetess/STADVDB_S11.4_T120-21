@@ -82,12 +82,20 @@ router.post('/dice', (req, res) => {
   olapController.postDice(req, res);
 });
 
-router.get('/drilldown', (req, res) => {
-  controller.getDrillDown(req, res);
+router.get('/drilldown_a', (req, res) => {
+  controller.getDrillDown_a(req, res);
 });
 
-router.get('/rollup', (req, res) => {
-  controller.getRollUp(req, res);
+router.get('/drilldown_b', (req, res) => {
+  controller.getDrillDown_b(req, res);
+});
+
+router.get('/rollup_a', (req, res) => {
+  controller.getRollUp_a(req, res);
+});
+
+router.get('/rollup_b', (req, res) => {
+  controller.getRollUp_b(req, res);
 });
 
 module.exports = router;
