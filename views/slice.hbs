@@ -15,7 +15,7 @@
         {{/each}}
 
       </select>
-      <input type="hidden" name="page" value='1'>
+      <!--<input type="hidden" name="page" value='1'>-->
 
       <button onclick="submit()">Search</button>
     </form>
@@ -38,7 +38,7 @@
     </div>
   {{/if}}
 
-  {{#each movies}}
+  {{#each results}}
   <div class="row">
     <div class="title center col-1">
       <p>{{page @index ../offset}}</p>
