@@ -86,16 +86,8 @@ router.get('/drilldown', (req, res) => {
   controller.getDrillDown(req, res);
 });
 
-router.post('/drilldown', (req, res) => {
-  olapController.postDrillDown(req, res);
-});
-
 router.get('/rollup', (req, res) => {
   controller.getRollUp(req, res);
-});
-
-router.post('/rollup', (req, res) => {
-  olapController.postRollUp(req, res);
 });
 
 module.exports = router;
