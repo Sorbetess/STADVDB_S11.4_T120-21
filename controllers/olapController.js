@@ -72,7 +72,7 @@ const olapController = {
       GROUP BY 
         rd.quarter, pd.name
       ORDER BY 
-        rd.quarter, Total_Revenue DESC
+        rd.quarter, Total_Revenue DESC, pd.name
     `;
 
     transactPool.query(yearQuery, (error, years) => {
