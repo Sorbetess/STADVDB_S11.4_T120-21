@@ -21,39 +21,27 @@
     </form>
 
   </div>
-
   <br>
 
   {{#if isResults}}
-  <p> If a result is "N/A", it means the information is unavailable. </p>
-  <div class="row">
-    <div class="title col-2">
-      <p>Quarter</p>
-    </div>
-    <div class="title col-6">
-      <p>Company</p>
-    </div>
-    <div class="title col-4">
-      <p>Total Revenue</p>
-    </div>
-  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Quarter</th>
+        <th scope="col">Company</th>
+        <th scope="col">Total Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each results}}
+      <tr>
+        <th scope="row">{{quarter}}</th>
+        <td>{{company}}</td>
+        <td>{{tomoney total}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
   {{/if}}
-
-  {{#each results}}
-  <div class="row">
-    <div class="title2 col-2">
-      <p>{{quarter}}</p>
-    </div>
-    <div class="col-6">
-      <div class="title2">
-        <p>{{company}}</p>
-      </div>
-    </div>
-    <div class="col-4">
-      <p>{{tomoney total_revenue}}</p>
-    </div>
-    <hr>
-  </div>
-  {{/each}}
 
 </div>

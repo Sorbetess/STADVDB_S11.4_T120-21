@@ -27,39 +27,24 @@
   <br>
 
   {{#if isResults}}
-  <p> If a result is "N/A", it means the information is unavailable. </p>
-  <div class="row">
-    <div class="title2 col-4">
-      <p>Collection</p>
-    </div>
-    <div class="title2 col-5">
-      <p>Movie</p>
-    </div>
-    <div class="title2 col-3">
-      <p>Total Revenue</p>
-    </div>
-  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Collection</th>
+        <th scope="col">Company</th>
+        <th scope="col">Total Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each results}}
+      <tr>
+        <th scope="row">{{collection}}</th>
+        <td>{{company}}</td>
+        <td>{{tomoney total_revenue}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
   {{/if}}
-
-  {{#each results}}
-  <div class="row">
-    <div class="col-4">
-      <div class="title3">
-        {{company}}
-      </div>
-    </div>
-    <div class="col-5">
-      <div class="title3">
-        <p>{{collection}}</p>
-      </div>
-    </div>
-    <div class="col-3">
-      <p>{{tomoney total_revenue}}</p>
-    </div>
-    <hr>
-  </div>
-  {{/each}}
-
-  {{!-- <div id={{offset}}></div> --}}
 
 </div>

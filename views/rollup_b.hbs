@@ -2,33 +2,23 @@
   <h2>{{ title }}</h2>
   <br>
 
-  <div class="row">
-    <div class="title col-2">
-      <p>Quarter</p>
-    </div>
-    <div class="title col-6">
-      <p>Genre</p>
-    </div>
-    <div class="title col-4">
-      <p>Average Revenue</p>
-    </div>
-  </div>
-
-  {{#each results}}
-  <div class="row">
-    <div class="title2 col-2">
-      <p>{{quarter}}</p>
-    </div>
-    <div class="col-6">
-      <div class="title2">
-        <p>{{genre}}</p>
-      </div>
-    </div>
-    <div class="col-4">
-      <p>{{tomoney avg_revenue}}</p>
-    </div>
-    <hr>
-  </div>
-  {{/each}}
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Quarter</th>
+        <th scope="col">Genre</th>
+        <th scope="col">Average Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each results}}
+      <tr>
+        <th scope="row">{{quarter}}</th>
+        <td>{{genre}}</td>
+        <td>{{tomoney avg_revenue}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
 
 </div>
