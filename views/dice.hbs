@@ -23,23 +23,22 @@
     </form>
 
   </div>
-
   <br>
 
   {{#if isResults}}
   <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">Collection</th>
         <th scope="col">Company</th>
+        <th scope="col">Collection</th>
         <th scope="col">Total Revenue</th>
       </tr>
     </thead>
     <tbody>
       {{#each results}}
       <tr>
-        <th scope="row">{{collection}}</th>
-        <td>{{company}}</td>
+        <th scope="row">{{company}}</th>
+        <td>{{collection}}</td>
         <td>{{tomoney total}}</td>
       </tr>
       {{/each}}
