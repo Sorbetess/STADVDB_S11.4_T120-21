@@ -83,6 +83,8 @@ const olapController = {
       pool.query(query, (error, results) => {
         if (error) throw error;
 
+        console.log(results);
+
         res.render('slice', {
           title: 'Slice - Total Revenue of Production Companies in a Specific Year',
 
@@ -143,6 +145,8 @@ const olapController = {
       pool.query(query, (error, results) => {
         if (error) throw error;
 
+        console.log(results);
+        
         res.render('dice', {
           title: 'Dice - Revenue of a Production Company in a Specific Year',
 
