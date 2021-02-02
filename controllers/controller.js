@@ -129,8 +129,6 @@ const controller = {
     });
   },
 
-
-
   getDrillDown_a: function (req, res) {
     var query = `
       SELECT 
@@ -152,12 +150,9 @@ const controller = {
     dwPool.query(query, (error, results) => {
       if (error) throw error;
       
-      console.log(results);
-      
       res.render('drilldown_a', {
         title: 'Drill-Down - Average Monthly Revenue of Production Companies',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
@@ -177,19 +172,14 @@ const controller = {
     dwPool.query(query, (error, results) => {
       if (error) throw error;
 
-      console.log(results);
-
       res.render('drilldown_b', {
         title: 'Drill-Down - Average Monthly Revenue of Genres',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
     });
   },
-
-
 
   getRollUp_a: function (req, res) {
     var query = `
@@ -211,14 +201,11 @@ const controller = {
         Avg_Revenue DESC
     `;
 
-    console.log(results);
-
     dwPool.query(query, (error, results) => {
       if (error) throw error;
       res.render('rollup_a', {
         title: 'Roll Up - Average Quarterly Revenue of Production Companies',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
@@ -235,14 +222,11 @@ const controller = {
       ORDER BY rd.quarter, (CASE WHEN g.name IS NULL THEN 1 ELSE 0 END), Avg_Revenue DESC, g.name
     `;
 
-    console.log(results);
-
     dwPool.query(query, (error, results) => {
       if (error) throw error;
       res.render('rollup_b', {
         title: 'Roll Up - Average Quarterly Revenue of Genres',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
