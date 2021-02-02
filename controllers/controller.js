@@ -170,7 +170,15 @@ const controller = {
 
   getRollUp_a: function (req, res) {
     var query = 
-    '';
+    'SELECT rd.quarter, pd.name AS Company, m.title as Movie, ROUND(AVG(r.revenue), 2) AS Avg_Revenue ' +
+    'FROM ' + 
+    '(SELECT revenue, release_id, company_id, movie_id FROM Revenue GROUP BY revenue, release_id, company_id, movie_id) r ' +
+    'JOIN Release_Date rd ON r.release_id = rd.release_id ' + 
+    'JOIN Production_Company pd ON r.company_id = pd.company_id ' +
+    'JOIN Movie m ON r.movie_id = m.movie_id ' + 
+    'GROUP BY ROLLUP(rd.quarter, pd.name, m.title) ' + 
+    'ORDER BY rd.quarter, (CASE WHEN pd.name IS NULL THEN 1 ELSE 0 END), ' + 
+    'pd.name, (CASE WHEN m.title IS NULL THEN 1 ELSE 0 END), Avg_Revenue DESC';
 
     pool.query(query, (error, results) => {
       if (error) throw error;
