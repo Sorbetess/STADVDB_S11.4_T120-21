@@ -129,8 +129,6 @@ const controller = {
     });
   },
 
-
-
   getDrillDown_a: function (req, res) {
     var query = `
       SELECT 
@@ -151,10 +149,10 @@ const controller = {
 
     dwPool.query(query, (error, results) => {
       if (error) throw error;
+      
       res.render('drilldown_a', {
         title: 'Drill-Down - Average Monthly Revenue of Production Companies',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
@@ -173,17 +171,15 @@ const controller = {
 
     dwPool.query(query, (error, results) => {
       if (error) throw error;
+
       res.render('drilldown_b', {
         title: 'Drill-Down - Average Monthly Revenue of Genres',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
     });
   },
-
-
 
   getRollUp_a: function (req, res) {
     var query = `
@@ -210,7 +206,6 @@ const controller = {
       res.render('rollup_a', {
         title: 'Roll Up - Average Quarterly Revenue of Production Companies',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
@@ -219,7 +214,7 @@ const controller = {
 
   getRollUp_b: function (req, res) {
     var query =`
-      SELECT rd.quarter, g.name, ROUND(AVG(r.revenue),2) AS avg_revenue
+      SELECT rd.quarter, g.name AS genre, ROUND(AVG(r.revenue),2) AS avg_revenue
       FROM Revenue r
       JOIN Release_Date rd ON r.release_id = rd.release_id
       JOIN Genre g ON r.genre_id = g.genre_id
@@ -232,7 +227,6 @@ const controller = {
       res.render('rollup_b', {
         title: 'Roll Up - Average Quarterly Revenue of Genres',
   
-        isResults: true,
         results: results.rows,
         offset: 0
       });
