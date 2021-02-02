@@ -151,6 +151,9 @@ const controller = {
 
     dwPool.query(query, (error, results) => {
       if (error) throw error;
+      
+      console.log(results);
+      
       res.render('drilldown_a', {
         title: 'Drill-Down - Average Monthly Revenue of Production Companies',
   
@@ -173,6 +176,9 @@ const controller = {
 
     dwPool.query(query, (error, results) => {
       if (error) throw error;
+
+      console.log(results);
+
       res.render('drilldown_b', {
         title: 'Drill-Down - Average Monthly Revenue of Genres',
   
@@ -205,6 +211,8 @@ const controller = {
         Avg_Revenue DESC
     `;
 
+    console.log(results);
+
     dwPool.query(query, (error, results) => {
       if (error) throw error;
       res.render('rollup_a', {
@@ -219,13 +227,15 @@ const controller = {
 
   getRollUp_b: function (req, res) {
     var query =`
-      SELECT rd.quarter, g.name, ROUND(AVG(r.revenue),2) AS avg_revenue
+      SELECT rd.quarter, g.name AS genre, ROUND(AVG(r.revenue),2) AS avg_revenue
       FROM Revenue r
       JOIN Release_Date rd ON r.release_id = rd.release_id
       JOIN Genre g ON r.genre_id = g.genre_id
       GROUP BY ROLLUP(rd.quarter, g.name)
       ORDER BY rd.quarter, (CASE WHEN g.name IS NULL THEN 1 ELSE 0 END), Avg_Revenue DESC, g.name
     `;
+
+    console.log(results);
 
     dwPool.query(query, (error, results) => {
       if (error) throw error;
