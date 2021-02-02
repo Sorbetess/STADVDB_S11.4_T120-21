@@ -3,25 +3,23 @@
   <br>
 
   <div id="form">
-
     <form name="year" id="year" method="post">
-
-      <label for="year">Year:</label>
-      <select id="year" name="year">
-
-        {{#each years}}
-        <option value={{year}}>{{year}}</option>
-        {{/each}}
-
-      </select>
-
-      <label for="company">Company:</label>
-      <input type="text" id="company" name="company" onkeydown="pressedEnter(event)">
-
-      <!--<input type="hidden" name="page" value='1'>-->
-      <button onclick="submit()">Search</button>
+      <div class="row">
+        <div class="col-auto">
+          <label for="year">Year:</label>
+          <select id="year" name="year">
+            {{#each years}}
+            <option value={{year}}>{{year}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="col-auto">
+          <label for="company">Company:</label>
+          <input type="text" id="company" name="company" onkeydown="pressedEnter(event)">
+          <button onclick="submit()">Search</button>
+        </div>
+      </div>
     </form>
-
   </div>
   <br>
 
