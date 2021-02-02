@@ -25,7 +25,7 @@
   <br>
 
   {{#if isResults}}
-  <p> If a result is "N/A", it means the information is unavailable. </p>
+  
     <div class="row">
       <div class="title col-1">
       </div>
@@ -44,7 +44,7 @@
       <p>{{page @index ../offset}}</p>
     </div> --}}
     <div class="col-6">
-      <div class="title">{{name}}</div>
+      <div class="title">{{company}}</div>
       {{!-- <div class="timestamp">
         <p>{{todate release_date}}</p>
       </div> --}}
@@ -56,6 +56,6 @@
   <hr>
   {{/each}}
 
-  <div id={{offset}}></div>
+  {{!-- <div id={{offset}}></div> --}}
 
 </div>
