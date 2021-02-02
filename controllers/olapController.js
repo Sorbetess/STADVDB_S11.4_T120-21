@@ -20,7 +20,7 @@ function isThereNextPage(queryCount, limit, currentPage) {
   'FROM Release_Date ' +
   'ORDER BY year DESC';*/
 
-const yearQuery =`
+const yearQuery = `
   SELECT DISTINCT EXTRACT(year FROM release_date) as year
   FROM Movies
   WHERE release_date IS NOT NULL
@@ -45,7 +45,6 @@ const transactPool = new Pool({
 });
 
 const olapController = {
-
   postSlice: function (req, res) {
     var year = req.body.year;
 
@@ -75,7 +74,6 @@ const olapController = {
       ORDER BY 
         rd.quarter, Total_Revenue DESC
     `;
-    
 
     transactPool.query(yearQuery, (error, years) => {
       if (error) throw error;
@@ -111,7 +109,7 @@ const olapController = {
     // 'GROUP BY rd.year, pd.company_id ' +
     // 'ORDER BY SUM(r.revenue) desc';
 
-    var query =`
+    var query = `
       SELECT 
         pd.name AS Company, 
         (CASE WHEN c.name IS NULL THEN 'Movies Without a Collection' ELSE c.name END) AS Collection, 
@@ -155,7 +153,7 @@ const olapController = {
         });
       });
     });
-  },
+  }
 
   // no need for post since no user input naman?
 
@@ -188,8 +186,7 @@ const olapController = {
         offset: 0
       });
     });
-  } */ 
-  
+  } */
 };
 
 module.exports = olapController;

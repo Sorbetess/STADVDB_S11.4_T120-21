@@ -25,31 +25,31 @@
   <br>
 
   {{#if isResults}}
-    <p> If a result is "N/A", it means the information is unavailable. </p>
-    <div class="row">
-      <div class="title col-1">
-        <p>Quarter</p>
-      </div>
-      <div class="title col-6">
-        <p>Company</p>
-      </div>
-      <div class="title col-5">
-        <p>Total Revenue</p>
-      </div>
+  <p> If a result is "N/A", it means the information is unavailable. </p>
+  <div class="row">
+    <div class="title col-2">
+      <p>Quarter</p>
     </div>
+    <div class="title col-6">
+      <p>Company</p>
+    </div>
+    <div class="title col-4">
+      <p>Total Revenue</p>
+    </div>
+  </div>
   {{/if}}
 
   {{#each results}}
   <div class="row">
-    <div class="title col-1">
-        <p>{{quarter}}</p>
-      </div>
+    <div class="title col-2">
+      <p>{{quarter}}</p>
+    </div>
     <div class="col-6">
       <div class="title">
         <p>{{company}}</p>
       </div>
     </div>
-    <div class="col-5">
+    <div class="col-4">
       <p>{{tomoney total_revenue}}</p>
     </div>
   </div>
