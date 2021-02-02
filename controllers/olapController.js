@@ -84,7 +84,7 @@ const olapController = {
         if (error) throw error;
 
         res.render('slice', {
-          title: 'Slice - Total Revenue of Production Companies in a Specific Year',
+          title: 'Slice - Total Revenue of Production Companies in Year' + year,
 
           // options for years
           years: years.rows,
