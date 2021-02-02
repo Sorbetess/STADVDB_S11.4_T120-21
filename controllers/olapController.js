@@ -20,14 +20,23 @@ function isThereNextPage(queryCount, limit, currentPage) {
   'FROM Release_Date ' +
   'ORDER BY year DESC';*/
 
-const yearQuery =
-'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
-'FROM Movies ' +
-'WHERE release_date IS NOT NULL ' +
-'ORDER BY year DESC';
+const yearQuery =`
+  SELECT DISTINCT EXTRACT(year FROM release_date) as year
+  FROM Movies
+  WHERE release_date IS NOT NULL
+  ORDER BY year DESC
+`;
 
 //UPDATE
 const pool = new Pool({
+  user: process.env.RDS_USER,
+  host: process.env.RDS_URL,
+  database: process.env.RDS_OLAP_DATABASE,
+  password: process.env.RDS_PASSWORD,
+  port: process.env.RDS_PORT
+});
+
+const transactPool = new Pool({
   user: process.env.RDS_USER,
   host: process.env.RDS_URL,
   database: process.env.RDS_DATABASE,
@@ -40,19 +49,35 @@ const olapController = {
   postSlice: function (req, res) {
     var year = req.body.year;
 
-    var query =
-    'SELECT rd.quarter, pd.name AS Company, SUM(r.revenue) AS Total_Revenue '
-    'FROM (SELECT revenue, release_id, company_id, collection_id, movie_id ' +
-    'FROM Revenue ' +
-    'GROUP BY revenue, release_id, company_id, collection_id, movie_id) r ' +
-    'JOIN Release_Date rd ON r.release_id = rd.release_id ' +
-    'JOIN Production_Company pd ON r.company_id = pd.company_id ' +
-    'WHERE rd.year = ' + year + ' ' +
-    'GROUP BY rd.quarter, pd.name ' + 
-    'ORDER BY rd.quarter, Total_Revenue DESC';
+    var query = `
+      SELECT 
+        rd.quarter, 
+        pd.name AS Company, 
+        SUM(r.revenue) AS Total_Revenue
+      FROM (
+        SELECT 
+          revenue, 
+          release_id, 
+          company_id, 
+          collection_id, 
+          movie_id
+        FROM Revenue
+        GROUP BY revenue, release_id, company_id, collection_id, movie_id
+      ) r
+      JOIN 
+        Release_Date rd ON r.release_id = rd.release_id
+      JOIN 
+        Production_Company pd ON r.company_id = pd.company_id
+      WHERE 
+        rd.year = ${year}
+      GROUP BY 
+        rd.quarter, pd.name
+      ORDER BY 
+        rd.quarter, Total_Revenue DESC
+    `;
     
 
-    pool.query(yearQuery, (error, years) => {
+    transactPool.query(yearQuery, (error, years) => {
       if (error) throw error;
 
       pool.query(query, (error, results) => {
@@ -86,21 +111,34 @@ const olapController = {
     // 'GROUP BY rd.year, pd.company_id ' +
     // 'ORDER BY SUM(r.revenue) desc';
 
-    var query =
-    "SELECT pd.name AS Company, (CASE WHEN c.name IS NULL THEN 'Movies Without a Collection' ELSE c.name END) AS Collection, ROUND(SUM(r.revenue), 2) AS Total_Revenue " +
-    'FROM (SELECT revenue, release_id, company_id, collection_id, movie_id ' +
-    'FROM Revenue ' +
-    'GROUP BY revenue, release_id, company_id, collection_id, movie_id) r ' +
-    'FULL JOIN Release_Date rd ON r.release_id = rd.release_id ' +
-    'FULL JOIN Production_Company pd ON r.company_id = pd.company_id ' +
-    'FULL JOIN Movie m ON r.movie_id = m.movie_id ' +
-    'FULL JOIN Collection c ON r.collection_id = c.collection_id ' +
-    'WHERE rd.year = ' + year + 'AND ' + 
-    'LOWER(pd.name) LIKE LOWER(\'%' + company + '%\') ' +
-    'GROUP BY pd.company_id, c.collection_id ' +
-    'ORDER BY pd.name, SUM(r.revenue) DESC';
+    var query =`
+      SELECT 
+        pd.name AS Company, 
+        (CASE WHEN c.name IS NULL THEN 'Movies Without a Collection' ELSE c.name END) AS Collection, 
+        ROUND(SUM(r.revenue), 2) AS Total_Revenue
+      FROM (
+        SELECT revenue, release_id, company_id, collection_id, movie_id
+        FROM Revenue
+        GROUP BY revenue, release_id, company_id, collection_id, movie_id
+        ) r
+      FULL JOIN 
+        Release_Date rd ON r.release_id = rd.release_id
+      FULL JOIN 
+        Production_Company pd ON r.company_id = pd.company_id
+      FULL JOIN 
+        Movie m ON r.movie_id = m.movie_id
+      FULL JOIN 
+        Collection c ON r.collection_id = c.collection_id
+      WHERE 
+        rd.year = ${year} AND 
+        LOWER(pd.name) LIKE LOWER('%${company}%')
+      GROUP BY 
+        pd.company_id, c.collection_id
+      ORDER BY 
+        pd.name, SUM(r.revenue) DESC;
+    `;
 
-    pool.query(yearQuery, (error, years) => {
+    transactPool.query(yearQuery, (error, years) => {
       if (error) throw error;
       pool.query(query, (error, results) => {
         if (error) throw error;

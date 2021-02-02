@@ -15,11 +15,12 @@ function isThereNextPage(queryCount, limit, currentPage) {
   return queryCount <= limit || currentPage >= lastPage ? false : true;
 }
 
-const yearQuery =
-  'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
-  'FROM Movies ' +
-  'WHERE release_date IS NOT NULL ' +
-  'ORDER BY year DESC';
+const yearQuery = `
+  SELECT DISTINCT EXTRACT(year FROM release_date) as year
+  FROM Movies
+  WHERE release_date IS NOT NULL
+  ORDER BY year DESC
+`;
 
 const pool = new Pool({
   user: process.env.RDS_USER,

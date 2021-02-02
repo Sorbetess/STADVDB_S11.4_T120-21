@@ -8,12 +8,12 @@ const pool = new Pool({
   password: process.env.RDS_PASSWORD,
   port: process.env.RDS_PORT
 });
-
-const yearQuery =
-  'SELECT DISTINCT EXTRACT(year FROM release_date) as year ' +
-  'FROM Movies ' +
-  'WHERE release_date IS NOT NULL ' +
-  'ORDER BY year DESC';
+const yearQuery = `
+  SELECT DISTINCT EXTRACT(year FROM release_date) as year 
+  FROM Movies 
+  WHERE release_date IS NOT NULL
+  ORDER BY year DESC
+`;
 
 const controller = {
   getFavicon: function (req, res) {
@@ -75,7 +75,7 @@ const controller = {
   },
 
   getPopularGenres: function (req, res) {
-    pool.query(yearQuery, (error, years) => {
+    transpool.query(yearQuery, (error, years) => {
       if (error) throw error;
       res.render('popular_genres', {
         title: 'Most Popular Genres By Year',
