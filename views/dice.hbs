@@ -8,7 +8,9 @@
         <div class="col-auto">
           <label for="year" class="visually-hidden">Year</label>
           <select class="form-select" id="year" name="year">
-            <option value={{year}}>2020</option>
+            {{#each years}}
+            <option value={{year}}>{{year}}</option>
+            {{/each}}
           </select>
         </div>
         <div class="col-auto">
