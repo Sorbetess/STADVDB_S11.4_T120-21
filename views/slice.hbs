@@ -3,6 +3,21 @@
   <br>
 
   <div id="form">
+    <form name="year" id="year" method="post">
+      <div class="row g-3">
+        <div class="col-auto">
+          <label for="year" class="visually-hidden">Year</label>
+          <select class="form-select" id="year" name="year">
+            {{#each years}}
+            <option value={{year}}>{{year}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-secondary" onclick="submit()">Search</button>
+        </div>
+      </div>
+    </form>
 
     <form name="year" id="year" method="post">
 

@@ -4,19 +4,20 @@
 
   <div id="form">
     <form name="year" id="year" method="post">
-      <div class="row">
+      <div class="row g-3">
         <div class="col-auto">
-          <label for="year">Year:</label>
-          <select id="year" name="year">
-            {{#each years}}
-            <option value={{year}}>{{year}}</option>
-            {{/each}}
+          <label for="year" class="visually-hidden">Year</label>
+          <select class="form-select" id="year" name="year">
+            <option value={{year}}>2020</option>
           </select>
         </div>
         <div class="col-auto">
-          <label for="company">Company:</label>
-          <input type="text" id="company" name="company" onkeydown="pressedEnter(event)">
-          <button onclick="submit()">Search</button>
+          <label for="company" class="visually-hidden">Company</label>
+          <input class="form-control" placeholder="Company" type="text" id="company" name="company"
+            onkeydown="pressedEnter(event)">
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-secondary" onclick="submit()">Search</button>
         </div>
       </div>
     </form>
