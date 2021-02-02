@@ -30,27 +30,27 @@
       <div class="title col-1">
       </div>
       <div class="title col-6">
-        <p>Movie</p>
+        <p>Company</p>
       </div>
       <div class="title col-5">
-        <p>Income</p>
+        <p>Total Revenue</p>
       </div>
     </div>
   {{/if}}
 
   {{#each results}}
   <div class="row">
-    <div class="title center col-1">
+    {{!-- <div class="title center col-1">
       <p>{{page @index ../offset}}</p>
-    </div>
+    </div> --}}
     <div class="col-6">
-      <div class="title">{{title}}</div>
+      <div class="title">{{name}}</div>
       {{!-- <div class="timestamp">
         <p>{{todate release_date}}</p>
       </div> --}}
     </div>
     <div class="col-5">
-      <p>{{tomoney avg_revenue}}</p>
+      <p>{{tomoney total_revenue}}</p>
     </div>
   </div>
   <hr>
