@@ -1,35 +1,39 @@
 <div class="container">
   <h2>{{ title }}</h2>
   <br>
-
   <div class="row">
-    <div class="title col-2">
+    <div class="title2 col-1">
       <p>Month</p>
     </div>
-    <div class="title col-6">
+    <div class="title2 col-4">
       <p>Company</p>
     </div>
-    <div class="title col-4">
+    <div class="title2 col-4">
+      <p>Movie</p>
+    </div>
+    <div class="title2 col-3">
       <p>Average Revenue</p>
     </div>
   </div>
 
   {{#each results}}
   <div class="row">
-    <div class="title col-2">
+    <div class="title3 col-1">
       <p>{{month}}</p>
     </div>
-    <div class="col-6">
-      <div class="title">{{company}}</div>
-      <div class="timestamp">
-        <p>{{movie}}</p>
-      </div>
+    <div class="col-4">
+      <div class="title3">{{company}}</div>
     </div>
     <div class="col-4">
+      <div>
+        <p class="title3">{{movie}}</p>
+      </div>
+    </div>
+    <div class="col-3">
       <p>{{tomoney avg_revenue}}</p>
     </div>
+    <hr>
   </div>
-  <hr>
   {{/each}}
 
   <div id={{offset}}></div>
